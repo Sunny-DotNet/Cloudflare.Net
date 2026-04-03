@@ -67,10 +67,11 @@ jobs:
         done
 
     - name: Push to NuGet
-      if: env.NUGET_AUTH_TOKEN != ''
+      if: ${{ secrets.NUGET_AUTH_TOKEN != '' }}
       run: dotnet nuget push ./nupkg/*.nupkg --api-key ${{ secrets.NUGET_AUTH_TOKEN }} --source https://api.nuget.org/v3/index.json --skip-duplicate
       env:
         NUGET_AUTH_TOKEN: ${{ secrets.NUGET_AUTH_TOKEN }}
 
     - name: Push to GitHub Packages
+      if: ${{ !cancelled() }}
       run: dotnet nuget push ./nupkg/*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/Sunny-DotNet/index.json --skip-duplicate

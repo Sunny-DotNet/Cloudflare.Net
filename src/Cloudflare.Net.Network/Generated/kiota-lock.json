@@ -1,0 +1,36 @@
+{
+  "descriptionHash": "CA62FF62F158D4CDD70AC4EC86BD4185E92BF35AA7FA74B754C8964EF3B4F37E5BE8C053570B352C91BFA60CD0AA514169B7818418670FB43BD88AE90EC1A622",
+  "descriptionLocation": "../../../openapi/split/cloudflare-network.json",
+  "lockFileVersion": "1.0.0",
+  "kiotaVersion": "1.30.0",
+  "clientClassName": "CloudflareNetworkClient",
+  "typeAccessModifier": "Public",
+  "clientNamespaceName": "Cloudflare.Net.Network.Generated",
+  "language": "CSharp",
+  "usesBackingStore": false,
+  "excludeBackwardCompatible": true,
+  "includeAdditionalData": true,
+  "disableSSLValidation": false,
+  "serializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Text.TextSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Form.FormSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Multipart.MultipartSerializationWriterFactory"
+  ],
+  "deserializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonParseNodeFactory",
+    "Microsoft.Kiota.Serialization.Text.TextParseNodeFactory",
+    "Microsoft.Kiota.Serialization.Form.FormParseNodeFactory"
+  ],
+  "structuredMimeTypes": [
+    "application/json",
+    "text/plain;q=0.9",
+    "application/x-www-form-urlencoded;q=0.2",
+    "multipart/form-data;q=0.1"
+  ],
+  "includePatterns": [],
+  "excludePatterns": [],
+  "disabledValidationRules": [
+    "All"
+  ]
+}

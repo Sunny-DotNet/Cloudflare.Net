@@ -1,0 +1,36 @@
+{
+  "descriptionHash": "E81FFC1C064F08A6E06BA4C366D99E0AA9DEA6CECD3382A9C255AB987F7B1B578BDA6DB55CDF2E5164C2DD74BF3ED98AE8974C0D4B0B725D48BC844C078C948B",
+  "descriptionLocation": "../../../openapi/split/cloudflare-vectorize.json",
+  "lockFileVersion": "1.0.0",
+  "kiotaVersion": "1.30.0",
+  "clientClassName": "CloudflareVectorizeClient",
+  "typeAccessModifier": "Public",
+  "clientNamespaceName": "Cloudflare.Net.Vectorize.Generated",
+  "language": "CSharp",
+  "usesBackingStore": false,
+  "excludeBackwardCompatible": true,
+  "includeAdditionalData": true,
+  "disableSSLValidation": false,
+  "serializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Text.TextSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Form.FormSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Multipart.MultipartSerializationWriterFactory"
+  ],
+  "deserializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonParseNodeFactory",
+    "Microsoft.Kiota.Serialization.Text.TextParseNodeFactory",
+    "Microsoft.Kiota.Serialization.Form.FormParseNodeFactory"
+  ],
+  "structuredMimeTypes": [
+    "application/json",
+    "text/plain;q=0.9",
+    "application/x-www-form-urlencoded;q=0.2",
+    "multipart/form-data;q=0.1"
+  ],
+  "includePatterns": [],
+  "excludePatterns": [],
+  "disabledValidationRules": [
+    "All"
+  ]
+}

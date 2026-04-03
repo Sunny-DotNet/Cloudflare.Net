@@ -1,0 +1,4130 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Cloudflare API - Stream",
+    "version": "4.0.0"
+  },
+  "servers": [
+    {
+      "description": "Client API",
+      "url": "https://api.cloudflare.com/client/v4"
+    }
+  ],
+  "security": [
+    {
+      "api_email": [],
+      "api_key": []
+    },
+    {
+      "api_token": []
+    },
+    {
+      "user_service_key": []
+    }
+  ],
+  "paths": {
+    "/accounts/{account_id}/stream": {
+      "get": {
+        "description": "Lists up to 1000 videos from a single request. For a specific range, refer to the optional parameters.",
+        "operationId": "stream-videos-list-videos",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "The account identifier tag.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "description": "Specifies the processing status for all quality levels for a video.",
+              "enum": [
+                "pendingupload",
+                "downloading",
+                "queued",
+                "inprogress",
+                "ready",
+                "error",
+                "live-inprogress"
+              ],
+              "example": "inprogress",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "creator",
+            "schema": {
+              "description": "A user-defined identifier for the media creator.",
+              "example": "creator-id_abcde12345",
+              "maxLength": 64,
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "type",
+            "schema": {
+              "description": "Specifies whether the video is `vod` or `live`.",
+              "example": "live",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "asc",
+            "schema": {
+              "default": false,
+              "description": "Lists videos in ascending order of creation.",
+              "example": true,
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "video_name",
+            "schema": {
+              "description": "Provides a fast, exact string match on the `name` key in the `meta` field.",
+              "example": "puppy.mp4",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "schema": {
+              "description": "Provides a partial word match of the `name` key in the `meta` field. Slow for medium to large video libraries. May be unavailable for very large libraries.",
+              "example": "puppy.mp4",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "start",
+            "schema": {
+              "description": "Lists videos created after the specified date.",
+              "example": "2014-01-02T02:20:00Z",
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "end",
+            "schema": {
+              "description": "Lists videos created before the specified date.",
+              "example": "2014-01-02T02:20:00Z",
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "include_counts",
+            "schema": {
+              "default": false,
+              "description": "Includes the total number of videos associated with the submitted query parameters.",
+              "example": true,
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_video_response_collection"
+                }
+              }
+            },
+            "description": "List videos response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_api-response-common-failure"
+                }
+              }
+            },
+            "description": "List videos response failure."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "List videos",
+        "tags": [
+          "Stream Videos"
+        ],
+        "x-api-token-group": [
+          "Stream Write",
+          "Stream Read"
+        ]
+      },
+      "post": {
+        "description": "Initiates a video upload using the TUS protocol. On success, the server responds with a status code 201 (created) and includes a `location` header to indicate where the content should be uploaded. Refer to https://tus.io for protocol details.",
+        "operationId": "stream-videos-initiate-video-uploads-using-tus",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Tus-Resumable",
+            "required": true,
+            "schema": {
+              "description": "Specifies the TUS protocol version. This value must be included in every upload request.\nNotes: The only supported version of TUS protocol is 1.0.0.",
+              "enum": [
+                "1.0.0"
+              ],
+              "example": "1.0.0",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Upload-Creator",
+            "schema": {
+              "description": "A user-defined identifier for the media creator.",
+              "example": "creator-id_abcde12345",
+              "maxLength": 64,
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Upload-Length",
+            "required": true,
+            "schema": {
+              "description": "Indicates the size of the entire upload in bytes. The value must be a non-negative integer.",
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Upload-Metadata",
+            "schema": {
+              "description": "Comma-separated key-value pairs following the TUS protocol specification. Values are Base-64 encoded.\nSupported keys: `name`, `requiresignedurls`, `allowedorigins`, `thumbnailtimestamppct`, `watermark`, `scheduleddeletion`, `maxdurationseconds`.",
+              "example": "name aGVsbG8gd29ybGQ=, requiresignedurls, allowedorigins ZXhhbXBsZS5jb20sdGVzdC5jb20=",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "The account identifier tag.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "direct_user",
+            "schema": {
+              "default": false,
+              "description": "Provisions a URL to let your end users upload videos directly to Cloudflare Stream without exposing your API token to clients.",
+              "example": true,
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {}
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "Initiate video uploads using TUS response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "Initiate video uploads using TUS response failure."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Initiate video uploads using TUS",
+        "tags": [
+          "Stream Videos"
+        ],
+        "x-api-token-group": [
+          "Stream Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/stream/clip": {
+      "post": {
+        "description": "Clips a video based on the specified start and end times provided in seconds.",
+        "operationId": "stream-video-clipping-clip-videos-given-a-start-and-end-time",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "The account identifier tag.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/stream_videoClipStandard"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_clipResponseSingle"
+                }
+              }
+            },
+            "description": "Clip videos given a start and end time response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Clip videos given a start and end time response failure."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Clip videos given a start and end time",
+        "tags": [
+          "Stream Video Clipping"
+        ],
+        "x-api-token-group": [
+          "Stream Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/stream/copy": {
+      "post": {
+        "description": "Uploads a video to Stream from a provided URL.",
+        "operationId": "stream-videos-upload-videos-from-a-url",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "The account identifier tag.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Upload-Creator",
+            "schema": {
+              "description": "A user-defined identifier for the media creator.",
+              "example": "creator-id_abcde12345",
+              "maxLength": 64,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/stream_video_copy_request"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_video_response_single"
+                }
+              }
+            },
+            "description": "Upload videos from a URL response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Upload videos from a URL response failure."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Upload videos from a URL",
+        "tags": [
+          "Stream Videos"
+        ],
+        "x-api-token-group": [
+          "Stream Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/stream/direct_upload": {
+      "post": {
+        "description": "Creates a direct upload that allows video uploads without an API key.",
+        "operationId": "stream-videos-upload-videos-via-direct-upload-ur-ls",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "The account identifier tag.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Upload-Creator",
+            "schema": {
+              "description": "A user-defined identifier for the media creator.",
+              "example": "creator-id_abcde12345",
+              "maxLength": 64,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/stream_direct_upload_request"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_direct_upload_response"
+                }
+              }
+            },
+            "description": "Upload videos via direct upload URLs response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Upload videos via direct upload URLs response failure."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Upload videos via direct upload URLs",
+        "tags": [
+          "Stream Videos"
+        ],
+        "x-api-token-group": [
+          "Stream Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/stream/keys": {
+      "get": {
+        "description": "Lists the video ID and creation date and time when a signing key was created.",
+        "operationId": "stream-signing-keys-list-signing-keys",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_key_response_collection"
+                }
+              }
+            },
+            "description": "List signing keys response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_api-response-common-failure"
+                }
+              }
+            },
+            "description": "List signing keys response failure."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "List signing keys",
+        "tags": [
+          "Stream Signing Keys"
+        ],
+        "x-api-token-group": [
+          "Stream Write",
+          "Stream Read"
+        ]
+      },
+      "post": {
+        "description": "Creates an RSA private key in PEM and JWK formats. Key files are only displayed once after creation. Keys are created, used, and deleted independently of videos, and every key can sign any video.",
+        "operationId": "stream-signing-keys-create-signing-keys",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {}
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_key_generation_response"
+                }
+              }
+            },
+            "description": "Create signing keys response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Create signing keys response failure."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Create signing keys",
+        "tags": [
+          "Stream Signing Keys"
+        ],
+        "x-api-token-group": [
+          "Stream Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/stream/keys/{identifier}": {
+      "delete": {
+        "description": "Deletes signing keys and revokes all signed URLs generated with the key.",
+        "operationId": "stream-signing-keys-delete-signing-keys",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "description": "Identifier.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {}
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_deleted_response"
+                }
+              }
+            },
+            "description": "Delete signing keys response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Delete signing keys response failure."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Delete signing keys",
+        "tags": [
+          "Stream Signing Keys"
+        ],
+        "x-api-token-group": [
+          "Stream Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/stream/storage-usage": {
+      "get": {
+        "description": "Returns information about an account's storage use.",
+        "operationId": "stream-videos-storage-usage",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "The account identifier tag.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "creator",
+            "schema": {
+              "description": "A user-defined identifier for the media creator.",
+              "example": "creator-id_abcde12345",
+              "maxLength": 64,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_storage_use_response"
+                }
+              }
+            },
+            "description": "Returns information about an account's storage use response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Returns information about an account's storage use response failure."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Storage use",
+        "tags": [
+          "Stream Videos"
+        ],
+        "x-api-token-group": [
+          "Stream Write",
+          "Stream Read"
+        ]
+      }
+    },
+    "/accounts/{account_id}/stream/watermarks": {
+      "get": {
+        "description": "Lists all watermark profiles for an account.",
+        "operationId": "stream-watermark-profile-list-watermark-profiles",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "The account identifier tag.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_watermark_response_collection"
+                }
+              }
+            },
+            "description": "List watermark profiles response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_api-response-common-failure"
+                }
+              }
+            },
+            "description": "List watermark profiles response failure."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "List watermark profiles",
+        "tags": [
+          "Stream Watermark Profile"
+        ],
+        "x-api-token-group": [
+          "Stream Write",
+          "Stream Read"
+        ]
+      },
+      "post": {
+        "description": "Creates watermark profiles using a single `HTTP POST multipart/form-data` request.",
+        "operationId": "stream-watermark-profile-create-watermark-profiles-via-basic-upload",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "The account identifier tag.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/stream_watermark_basic_upload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_watermark_response_single"
+                }
+              }
+            },
+            "description": "Create watermark profiles via basic upload response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Create watermark profiles via basic upload response failure."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Create watermark profiles via basic upload",
+        "tags": [
+          "Stream Watermark Profile"
+        ],
+        "x-api-token-group": [
+          "Stream Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/stream/watermarks/{identifier}": {
+      "delete": {
+        "description": "Deletes a watermark profile.",
+        "operationId": "stream-watermark-profile-delete-watermark-profiles",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "description": "The unique identifier for a watermark profile.",
+              "example": "ea95132c15732412d22c1476fa83f27a",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "The account identifier tag.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {}
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/stream_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "example": "",
+                          "type": "string",
+                          "x-auditable": true
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Delete watermark profiles response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Delete watermark profiles response failure."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Delete watermark profiles",
+        "tags": [
+          "Stream Watermark Profile"
+        ],
+        "x-api-token-group": [
+          "Stream Write"
+        ]
+      },
+      "get": {
+        "description": "Retrieves details for a single watermark profile.",
+        "operationId": "stream-watermark-profile-watermark-profile-details",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "description": "The unique identifier for a watermark profile.",
+              "example": "ea95132c15732412d22c1476fa83f27a",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "The account identifier tag.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_watermark_response_single"
+                }
+              }
+            },
+            "description": "Watermark profile details response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Watermark profile details response failure."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Watermark profile details",
+        "tags": [
+          "Stream Watermark Profile"
+        ],
+        "x-api-token-group": [
+          "Stream Write",
+          "Stream Read"
+        ]
+      }
+    },
+    "/accounts/{account_id}/stream/webhook": {
+      "delete": {
+        "description": "Deletes a webhook.",
+        "operationId": "stream-webhook-delete-webhooks",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "The account identifier tag.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {}
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_deleted_response"
+                }
+              }
+            },
+            "description": "Delete webhooks response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Delete webhooks response failure."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Delete webhooks",
+        "tags": [
+          "Stream Webhook"
+        ],
+        "x-api-token-group": [
+          "Stream Write"
+        ]
+      },
+      "get": {
+        "description": "Retrieves a list of webhooks.",
+        "operationId": "stream-webhook-view-webhooks",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "The account identifier tag.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_webhook_response_single"
+                }
+              }
+            },
+            "description": "View webhooks response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_api-response-common-failure"
+                }
+              }
+            },
+            "description": "View webhooks response failure."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "View webhooks",
+        "tags": [
+          "Stream Webhook"
+        ],
+        "x-api-token-group": [
+          "Stream Write",
+          "Stream Read"
+        ]
+      },
+      "put": {
+        "description": "Creates a webhook notification.",
+        "operationId": "stream-webhook-create-webhooks",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "The account identifier tag.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/stream_webhook_request"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_webhook_response_single"
+                }
+              }
+            },
+            "description": "Create webhooks response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Create webhooks response failure."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Create webhooks",
+        "tags": [
+          "Stream Webhook"
+        ],
+        "x-api-token-group": [
+          "Stream Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/stream/{identifier}": {
+      "delete": {
+        "description": "Deletes a video and its copies from Cloudflare Stream.",
+        "operationId": "stream-videos-delete-video",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "description": "A Cloudflare-generated unique identifier for a media item.",
+              "example": "ea95132c15732412d22c1476fa83f27a",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "The account identifier tag.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {}
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "Delete video response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "Delete video response failure."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Delete video",
+        "tags": [
+          "Stream Videos"
+        ],
+        "x-api-token-group": [
+          "Stream Write"
+        ]
+      },
+      "get": {
+        "description": "Fetches details for a single video.",
+        "operationId": "stream-videos-retrieve-video-details",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "description": "A Cloudflare-generated unique identifier for a media item.",
+              "example": "ea95132c15732412d22c1476fa83f27a",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "The account identifier tag.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_video_response_single"
+                }
+              }
+            },
+            "description": "Retrieve video details response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Retrieve video details response failure."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Retrieve video details",
+        "tags": [
+          "Stream Videos"
+        ],
+        "x-api-token-group": [
+          "Stream Write",
+          "Stream Read"
+        ]
+      },
+      "post": {
+        "description": "Edit details for a single video.",
+        "operationId": "stream-videos-update-video-details",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "description": "A Cloudflare-generated unique identifier for a media item.",
+              "example": "ea95132c15732412d22c1476fa83f27a",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "The account identifier tag.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/stream_video_update"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_video_response_single"
+                }
+              }
+            },
+            "description": "Edit video details response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Edit video details response failure."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Edit video details",
+        "tags": [
+          "Stream Videos"
+        ]
+      }
+    },
+    "/accounts/{account_id}/stream/{identifier}/audio": {
+      "get": {
+        "description": "Lists additional audio tracks on a video. Note this API will not return information for audio attached to the video upload.",
+        "operationId": "list-audio-tracks",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "The account identifier tag.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "description": "A Cloudflare-generated unique identifier for a media item.",
+              "example": "ea95132c15732412d22c1476fa83f27a",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_listAudioTrackResponse"
+                }
+              }
+            },
+            "description": "Lists additional audio tracks on a video."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Lists additional audio tracks on a video response failure."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "List additional audio tracks on a video",
+        "tags": [
+          "Stream Audio Tracks"
+        ],
+        "x-api-token-group": [
+          "Stream Write",
+          "Stream Read"
+        ]
+      }
+    },
+    "/accounts/{account_id}/stream/{identifier}/audio/copy": {
+      "post": {
+        "description": "Adds an additional audio track to a video using the provided audio track URL.",
+        "operationId": "add-audio-track",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "The account identifier tag.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "description": "A Cloudflare-generated unique identifier for a media item.",
+              "example": "ea95132c15732412d22c1476fa83f27a",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/stream_copyAudioTrack"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_addAudioTrackResponse"
+                }
+              }
+            },
+            "description": "Add audio tracks to a video."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Add audio tracks to a video response failure."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Add audio tracks to a video",
+        "tags": [
+          "Stream Audio Tracks"
+        ]
+      }
+    },
+    "/accounts/{account_id}/stream/{identifier}/audio/{audio_identifier}": {
+      "delete": {
+        "description": "Deletes additional audio tracks on a video. Deleting a default audio track is not allowed. You must assign another audio track as default prior to deletion.",
+        "operationId": "delete-audio-tracks",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "The account identifier tag.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "description": "A Cloudflare-generated unique identifier for a media item.",
+              "example": "ea95132c15732412d22c1476fa83f27a",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "audio_identifier",
+            "required": true,
+            "schema": {
+              "description": "The unique identifier for an additional audio track.",
+              "example": "ea95132c15732412d22c1476fa83f27a",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_deleted_response"
+                }
+              }
+            },
+            "description": "Deletes additional audio tracks on a video."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_deleted_response"
+                }
+              }
+            },
+            "description": "Deletes additional audio tracks on a video response failure."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Delete additional audio tracks on a video",
+        "tags": [
+          "Stream Audio Tracks"
+        ],
+        "x-api-token-group": [
+          "Stream Write"
+        ]
+      },
+      "patch": {
+        "description": "Edits additional audio tracks on a video. Editing the default status of an audio track to `true` will mark all other audio tracks on the video default status to `false`.",
+        "operationId": "edit-audio-tracks",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "The account identifier tag.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "description": "A Cloudflare-generated unique identifier for a media item.",
+              "example": "ea95132c15732412d22c1476fa83f27a",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "audio_identifier",
+            "required": true,
+            "schema": {
+              "description": "The unique identifier for an additional audio track.",
+              "example": "ea95132c15732412d22c1476fa83f27a",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/stream_editAudioTrack"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_addAudioTrackResponse"
+                }
+              }
+            },
+            "description": "Edits additional audio tracks on a video."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Edits additional audio tracks on a video response failure."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Edit additional audio tracks on a video",
+        "tags": [
+          "Stream Audio Tracks"
+        ],
+        "x-api-token-group": [
+          "Stream Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/stream/{identifier}/captions": {
+      "get": {
+        "description": "Lists the available captions or subtitles for a specific video.",
+        "operationId": "stream-subtitles/-captions-list-captions-or-subtitles",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "description": "A Cloudflare-generated unique identifier for a media item.",
+              "example": "ea95132c15732412d22c1476fa83f27a",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_language_response_collection"
+                }
+              }
+            },
+            "description": "List captions or subtitles response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_api-response-common-failure"
+                }
+              }
+            },
+            "description": "List captions or subtitles response failure."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "List captions or subtitles",
+        "tags": [
+          "Stream Subtitles/Captions"
+        ],
+        "x-api-token-group": [
+          "Stream Write",
+          "Stream Read"
+        ]
+      }
+    },
+    "/accounts/{account_id}/stream/{identifier}/captions/{language}": {
+      "delete": {
+        "description": "Removes the captions or subtitles from a video.",
+        "operationId": "stream-subtitles/-captions-delete-captions-or-subtitles",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "language",
+            "required": true,
+            "schema": {
+              "description": "The language tag in BCP 47 format.",
+              "example": "tr",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "description": "A Cloudflare-generated unique identifier for a media item.",
+              "example": "ea95132c15732412d22c1476fa83f27a",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {}
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/stream_api-response-common"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "example": "",
+                          "type": "string",
+                          "x-auditable": true
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Delete captions or subtitles response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Delete captions or subtitles response failure."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Delete captions or subtitles",
+        "tags": [
+          "Stream Subtitles/Captions"
+        ],
+        "x-api-token-group": [
+          "Stream Write"
+        ]
+      },
+      "get": {
+        "description": "Lists the captions or subtitles for provided language.",
+        "operationId": "stream-subtitles/-captions-get-caption-or-subtitle-for-language",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "language",
+            "required": true,
+            "schema": {
+              "description": "The language tag in BCP 47 format.",
+              "example": "tr",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "description": "A Cloudflare-generated unique identifier for a media item.",
+              "example": "ea95132c15732412d22c1476fa83f27a",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_language_response_single"
+                }
+              }
+            },
+            "description": "List captions or subtitles response for a provided language."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_api-response-common-failure"
+                }
+              }
+            },
+            "description": "List captions or subtitles response for a provided language."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "List captions or subtitles for a provided language",
+        "tags": [
+          "Stream Subtitles/Captions"
+        ],
+        "x-api-token-group": [
+          "Stream Write",
+          "Stream Read"
+        ]
+      },
+      "put": {
+        "description": "Uploads the caption or subtitle file to the endpoint for a specific BCP47 language. One caption or subtitle file per language is allowed.",
+        "operationId": "stream-subtitles/-captions-upload-captions-or-subtitles",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "language",
+            "required": true,
+            "schema": {
+              "description": "The language tag in BCP 47 format.",
+              "example": "tr",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "description": "A Cloudflare-generated unique identifier for a media item.",
+              "example": "ea95132c15732412d22c1476fa83f27a",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/stream_caption_basic_upload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_language_response_single"
+                }
+              }
+            },
+            "description": "Upload captions or subtitles response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Upload captions or subtitles response failure."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Upload captions or subtitles",
+        "tags": [
+          "Stream Subtitles/Captions"
+        ],
+        "x-api-token-group": [
+          "Stream Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/stream/{identifier}/captions/{language}/generate": {
+      "post": {
+        "description": "Generate captions or subtitles for provided language via AI.",
+        "operationId": "stream-subtitles/-captions-generate-caption-or-subtitle-for-language",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "language",
+            "required": true,
+            "schema": {
+              "description": "The language tag in BCP 47 format.",
+              "example": "tr",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "description": "A Cloudflare-generated unique identifier for a media item.",
+              "example": "ea95132c15732412d22c1476fa83f27a",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_language_response_single"
+                }
+              }
+            },
+            "description": "Generate captions or subtitles response for a provided language."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Generate captions or subtitles response for a provided language."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Generate captions or subtitles for a provided language via AI",
+        "tags": [
+          "Stream Subtitles/Captions"
+        ]
+      }
+    },
+    "/accounts/{account_id}/stream/{identifier}/captions/{language}/vtt": {
+      "get": {
+        "description": "Return WebVTT captions for a provided language.",
+        "operationId": "stream-subtitles/-captions-get-vtt-caption-or-subtitle",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "language",
+            "required": true,
+            "schema": {
+              "description": "The language tag in BCP 47 format.",
+              "example": "tr",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "description": "A Cloudflare-generated unique identifier for a media item.",
+              "example": "ea95132c15732412d22c1476fa83f27a",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {}
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "text/vtt": {
+                "schema": {
+                  "example": "'WEBVTT\n 00:00:00.000 --> 00:00:02.480\n This is example response'\n",
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Return WebVTT caption or subtitle response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Return WebVTT caption or subtitle response failure."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Return WebVTT captions for a provided language",
+        "tags": [
+          "Stream Subtitles/Captions"
+        ],
+        "x-api-token-group": [
+          "Stream Write",
+          "Stream Read"
+        ]
+      }
+    },
+    "/accounts/{account_id}/stream/{identifier}/downloads": {
+      "delete": {
+        "description": "Delete the downloads for a video. Use `/downloads/{download_type}` instead for type-specific downloads. Available types are `default` and `audio`.",
+        "operationId": "stream-m-p-4-downloads-delete-downloads",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "description": "A Cloudflare-generated unique identifier for a media item.",
+              "example": "ea95132c15732412d22c1476fa83f27a",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_deleted_response"
+                }
+              }
+            },
+            "description": "Delete downloads response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Delete downloads response failure."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Delete downloads",
+        "tags": [
+          "Stream MP4 Downloads"
+        ],
+        "x-api-token-group": [
+          "Stream Write"
+        ]
+      },
+      "get": {
+        "description": "Lists the downloads created for a video.",
+        "operationId": "stream-m-p-4-downloads-list-downloads",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "description": "A Cloudflare-generated unique identifier for a media item.",
+              "example": "ea95132c15732412d22c1476fa83f27a",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_downloads_response"
+                }
+              }
+            },
+            "description": "List downloads response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_api-response-common-failure"
+                }
+              }
+            },
+            "description": "List downloads response failure."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "List downloads",
+        "tags": [
+          "Stream MP4 Downloads"
+        ],
+        "x-api-token-group": [
+          "Stream Write",
+          "Stream Read"
+        ]
+      },
+      "post": {
+        "description": "Creates a download for a video when a video is ready to view. Use `/downloads/{download_type}` instead for type-specific downloads. Available types are `default` and `audio`.",
+        "operationId": "stream-m-p-4-downloads-create-downloads",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "description": "A Cloudflare-generated unique identifier for a media item.",
+              "example": "ea95132c15732412d22c1476fa83f27a",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {}
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_downloads_response_single"
+                }
+              }
+            },
+            "description": "Create downloads response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Create downloads response failure."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Create downloads",
+        "tags": [
+          "Stream MP4 Downloads"
+        ]
+      }
+    },
+    "/accounts/{account_id}/stream/{identifier}/downloads/{download_type}": {
+      "delete": {
+        "description": "Delete specific type of download. For backwards-compatibility, DELETE requests to /downloads will delete the default download.",
+        "operationId": "stream-downloads-delete-type-specific-downloads",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "description": "A Cloudflare-generated unique identifier for a media item.",
+              "example": "ea95132c15732412d22c1476fa83f27a",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "download_type",
+            "required": true,
+            "schema": {
+              "default": "default",
+              "description": "The type of downloads available are: `default`, `audio`.",
+              "enum": [
+                "default",
+                "audio"
+              ],
+              "example": "audio",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_deleted_response"
+                }
+              }
+            },
+            "description": "Delete downloads response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Delete downloads response failure."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Delete download",
+        "tags": [
+          "Stream MP4 Downloads"
+        ],
+        "x-api-token-group": [
+          "Stream Write"
+        ]
+      },
+      "post": {
+        "description": "Creates a download for a video of specified type. For backwards-compatibility, POST requests to /downloads will enable the default download.",
+        "operationId": "stream-downloads-create-type-specific-downloads",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "description": "A Cloudflare-generated unique identifier for a media item.",
+              "example": "ea95132c15732412d22c1476fa83f27a",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "download_type",
+            "required": true,
+            "schema": {
+              "default": "default",
+              "description": "The type of downloads available are: `default`, `audio`.",
+              "enum": [
+                "default",
+                "audio"
+              ],
+              "example": "audio",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {}
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_downloads_response"
+                }
+              }
+            },
+            "description": "Create download of specified type response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Create downloads of specified type response failure."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Create download",
+        "tags": [
+          "Stream MP4 Downloads"
+        ]
+      }
+    },
+    "/accounts/{account_id}/stream/{identifier}/embed": {
+      "get": {
+        "description": "Fetches an HTML code snippet to embed a video in a web page delivered through Cloudflare. On success, returns an HTML fragment for use on web pages to display a video. On failure, returns a JSON response body.",
+        "operationId": "stream-videos-retreieve-embed-code-html",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "description": "A Cloudflare-generated unique identifier for a media item.",
+              "example": "ea95132c15732412d22c1476fa83f27a",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "The account identifier tag.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": "<stream id=\"ea95132c15732412d22c1476fa83f27a\"></stream><script data-cfasync=\"false\" defer type=\"text/javascript\" src=\"https://embed.cloudflarestream.com/embed/we4g.fla9.latest.js\"></script>",
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Retreieve embed Code HTML response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Retreieve embed Code HTML response failure."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Retrieve embed Code HTML",
+        "tags": [
+          "Stream Videos"
+        ],
+        "x-api-token-group": [
+          "Stream Write",
+          "Stream Read"
+        ]
+      }
+    },
+    "/accounts/{account_id}/stream/{identifier}/token": {
+      "post": {
+        "description": "Creates a signed URL token for a video. If a body is not provided in the request, a token is created with default values.",
+        "operationId": "stream-videos-create-signed-url-tokens-for-videos",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "description": "A Cloudflare-generated unique identifier for a media item.",
+              "example": "ea95132c15732412d22c1476fa83f27a",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "The account identifier tag.",
+              "example": "023e105f4ecef8ad9ca31a8372d0c353",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/stream_signed_token_request"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_signed_token_response"
+                }
+              }
+            },
+            "description": "Create signed URL tokens for videos response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stream_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Create signed URL tokens for videos response failure."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Create signed URL tokens for videos",
+        "tags": [
+          "Stream Videos"
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "stream_webhook_request": {
+        "properties": {
+          "notificationUrl": {
+            "description": "The URL where webhooks will be sent.",
+            "example": "https://example.com",
+            "format": "uri",
+            "type": "string"
+          }
+        },
+        "required": [
+          "notificationUrl"
+        ]
+      },
+      "stream_key_response_collection": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/stream_api-response-common"
+          },
+          {
+            "properties": {
+              "result": {
+                "items": {
+                  "properties": {
+                    "created": {
+                      "description": "The date and time a signing key was created.",
+                      "example": "2014-01-02T02:20:00Z",
+                      "format": "date-time",
+                      "type": "string"
+                    },
+                    "id": {
+                      "description": "Identifier.",
+                      "example": "023e105f4ecef8ad9ca31a8372d0c353",
+                      "maxLength": 32,
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "stream_language_response_single": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/stream_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/stream_captions"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "stream_addAudioTrackResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/stream_api-response-common"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/stream_additionalAudio"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "stream_downloads_response": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/stream_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "description": "An object with download type keys. Each key is optional and only present if that download type has been created.",
+                "properties": {
+                  "audio": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/stream_downloads"
+                      }
+                    ],
+                    "description": "The audio-only download. Only present if this download type has been created."
+                  },
+                  "default": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/stream_downloads"
+                      }
+                    ],
+                    "description": "The default video download. Only present if this download type has been created."
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "stream_watermark_response_single": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/stream_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/stream_watermarks"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "stream_direct_upload_request": {
+        "properties": {
+          "allowedOrigins": {
+            "$ref": "#/components/schemas/stream_allowedOrigins"
+          },
+          "creator": {
+            "description": "A user-defined identifier for the media creator.",
+            "example": "creator-id_abcde12345",
+            "maxLength": 64,
+            "type": "string"
+          },
+          "expiry": {
+            "default": "Now + 30 minutes",
+            "description": "The date and time after upload when videos will not be accepted.",
+            "example": "2021-01-02T02:20:00Z",
+            "format": "date-time",
+            "type": "string",
+            "x-auditable": true
+          },
+          "maxDurationSeconds": {
+            "description": "The maximum duration in seconds for a video upload. Can be set for a video that is not yet uploaded to limit its duration. Uploads that exceed the specified duration will fail during processing. A value of `-1` means the value is unknown.",
+            "maximum": 36000,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/stream_media_metadata"
+          },
+          "requireSignedURLs": {
+            "default": false,
+            "description": "Indicates whether the video can be a accessed using the UID. When set to `true`, a signed token must be generated with a signing key to view the video.",
+            "example": true,
+            "type": "boolean"
+          },
+          "scheduledDeletion": {
+            "description": "Indicates the date and time at which the video will be deleted. Omit the field to indicate no change, or include with a `null` value to remove an existing scheduled deletion. If specified, must be at least 30 days from upload time.",
+            "example": "2014-01-02T02:20:00Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "thumbnailTimestampPct": {
+            "default": 0,
+            "description": "The timestamp for a thumbnail image calculated as a percentage value of the video's duration. To convert from a second-wise timestamp to a percentage, divide the desired timestamp by the total duration of the video.  If this value is not set, the default thumbnail image is taken from 0s of the video.",
+            "example": 0.529241,
+            "maximum": 1,
+            "minimum": 0,
+            "type": "number"
+          },
+          "watermark": {
+            "$ref": "#/components/schemas/stream_watermark_at_upload"
+          }
+        },
+        "required": [
+          "maxDurationSeconds"
+        ],
+        "type": "object"
+      },
+      "stream_deleted_response": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/stream_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "example": "ok",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "stream_signed_token_response": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/stream_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "properties": {
+                  "token": {
+                    "description": "The signed token used with the signed URLs feature.",
+                    "example": "eyJhbGciOiJSUzI1NiIsImtpZCI6ImU5ZGI5OTBhODI2NjZkZDU3MWM3N2Y5NDRhNWM1YzhkIn0.eyJzdWIiOiJlYTk1MTMyYzE1NzMyNDEyZDIyYzE0NzZmYTgzZjI3YSIsImtpZCI6ImU5ZGI5OTBhODI2NjZkZDU3MWM3N2Y5NDRhNWM1YzhkIiwiZXhwIjoiMTUzNzQ2MDM2NSIsIm5iZiI6IjE1Mzc0NTMxNjUifQ.OZhqOARADn1iubK6GKcn25hN3nU-hCFF5q9w2C4yup0C4diG7aMIowiRpP-eDod8dbAJubsiFuTKrqPcmyCKWYsiv0TQueukqbQlF7HCO1TV-oF6El5-7ldJ46eD-ZQ0XgcIYEKrQOYFF8iDQbqPm3REWd6BnjKZdeVrLzuRaiSnZ9qqFpGu5dfxIY9-nZKDubJHqCr3Imtb211VIG_b9MdtO92JjvkDS-rxT_pkEfTZSafl1OU-98A7KBGtPSJHz2dHORIrUiTA6on4eIXTj9aFhGiir4rSn-rn0OjPRTtJMWIDMoQyE_fwrSYzB7MPuzL2t82BWaEbHZTfixBm5A",
+                    "type": "string",
+                    "x-sensitive": true
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "stream_captions": {
+        "properties": {
+          "generated": {
+            "description": "Whether the caption was generated via AI.",
+            "example": true,
+            "type": "boolean"
+          },
+          "label": {
+            "description": "The language label displayed in the native language to users.",
+            "example": "Türkçe",
+            "type": "string"
+          },
+          "language": {
+            "description": "The language tag in BCP 47 format.",
+            "example": "tr",
+            "type": "string"
+          },
+          "status": {
+            "description": "The status of a generated caption.",
+            "enum": [
+              "ready",
+              "inprogress",
+              "error"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "stream_video_response_single": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/stream_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/stream_videos"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "stream_key_generation_response": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/stream_api-response-common"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/stream_keys"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "stream_direct_upload_response": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/stream_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "properties": {
+                  "scheduledDeletion": {
+                    "description": "Indicates the date and time at which the video will be deleted. Omit the field to indicate no change, or include with a `null` value to remove an existing scheduled deletion. If specified, must be at least 30 days from upload time.",
+                    "example": "2014-01-02T02:20:00Z",
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  "uid": {
+                    "description": "A Cloudflare-generated unique identifier for a media item.",
+                    "example": "ea95132c15732412d22c1476fa83f27a",
+                    "maxLength": 32,
+                    "type": "string"
+                  },
+                  "uploadURL": {
+                    "description": "The URL an unauthenticated upload can use for a single `HTTP POST multipart/form-data` request.",
+                    "example": "www.example.com/samplepath",
+                    "type": "string"
+                  },
+                  "watermark": {
+                    "$ref": "#/components/schemas/stream_watermarks"
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "stream_video_response_collection": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/stream_api-response-common"
+          },
+          {
+            "properties": {
+              "result": {
+                "items": {
+                  "$ref": "#/components/schemas/stream_videos"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          {
+            "properties": {
+              "range": {
+                "description": "The total number of remaining videos based on cursor position.",
+                "example": 1000,
+                "type": "integer"
+              },
+              "total": {
+                "description": "The total number of videos that match the provided filters.",
+                "example": 35586,
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "stream_videoClipStandard": {
+        "properties": {
+          "allowedOrigins": {
+            "$ref": "#/components/schemas/stream_allowedOrigins"
+          },
+          "clippedFromVideoUID": {
+            "description": "The unique video identifier (UID).",
+            "example": "023e105f4ecef8ad9ca31a8372d0c353",
+            "maxLength": 32,
+            "type": "string"
+          },
+          "creator": {
+            "description": "A user-defined identifier for the media creator.",
+            "example": "creator-id_abcde12345",
+            "maxLength": 64,
+            "type": "string"
+          },
+          "endTimeSeconds": {
+            "description": "Specifies the end time for the video clip in seconds.",
+            "type": "integer"
+          },
+          "maxDurationSeconds": {
+            "description": "The maximum duration in seconds for a video upload. Can be set for a video that is not yet uploaded to limit its duration. Uploads that exceed the specified duration will fail during processing. A value of `-1` means the value is unknown.",
+            "maximum": 36000,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "requireSignedURLs": {
+            "default": false,
+            "description": "Indicates whether the video can be a accessed using the UID. When set to `true`, a signed token must be generated with a signing key to view the video.",
+            "example": true,
+            "type": "boolean"
+          },
+          "startTimeSeconds": {
+            "description": "Specifies the start time for the video clip in seconds.",
+            "type": "integer"
+          },
+          "thumbnailTimestampPct": {
+            "default": 0,
+            "description": "The timestamp for a thumbnail image calculated as a percentage value of the video's duration. To convert from a second-wise timestamp to a percentage, divide the desired timestamp by the total duration of the video.  If this value is not set, the default thumbnail image is taken from 0s of the video.",
+            "example": 0.529241,
+            "maximum": 1,
+            "minimum": 0,
+            "type": "number"
+          },
+          "watermark": {
+            "$ref": "#/components/schemas/stream_watermarkAtUpload"
+          }
+        },
+        "required": [
+          "clippedFromVideoUID",
+          "startTimeSeconds",
+          "endTimeSeconds"
+        ],
+        "type": "object"
+      },
+      "stream_watermark_response_collection": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/stream_api-response-common"
+          },
+          {
+            "properties": {
+              "result": {
+                "items": {
+                  "$ref": "#/components/schemas/stream_watermarks"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "stream_watermark_basic_upload": {
+        "properties": {
+          "file": {
+            "description": "The image file to upload.",
+            "example": "@/Users/rchen/Downloads/watermark.png",
+            "type": "string",
+            "x-auditable": true
+          },
+          "name": {
+            "default": "",
+            "description": "A short description of the watermark profile.",
+            "example": "Marketing Videos",
+            "type": "string"
+          },
+          "opacity": {
+            "default": 1,
+            "description": "The translucency of the image. A value of `0.0` makes the image completely transparent, and `1.0` makes the image completely opaque. Note that if the image is already semi-transparent, setting this to `1.0` will not make the image completely opaque.",
+            "example": 0.75,
+            "maximum": 1,
+            "minimum": 0,
+            "type": "number"
+          },
+          "padding": {
+            "default": 0.05,
+            "description": "The whitespace between the adjacent edges (determined by position) of the video and the image. `0.0` indicates no padding, and `1.0` indicates a fully padded video width or length, as determined by the algorithm.",
+            "example": 0.1,
+            "maximum": 1,
+            "minimum": 0,
+            "type": "number"
+          },
+          "position": {
+            "default": "upperRight",
+            "description": "The location of the image. Valid positions are: `upperRight`, `upperLeft`, `lowerLeft`, `lowerRight`, and `center`. Note that `center` ignores the `padding` parameter.",
+            "example": "center",
+            "type": "string"
+          },
+          "scale": {
+            "default": 0.15,
+            "description": "The size of the image relative to the overall size of the video. This parameter will adapt to horizontal and vertical videos automatically. `0.0` indicates no scaling (use the size of the image as-is), and `1.0 `fills the entire video.",
+            "example": 0.1,
+            "maximum": 1,
+            "minimum": 0,
+            "type": "number"
+          }
+        },
+        "required": [
+          "file"
+        ],
+        "type": "object"
+      },
+      "stream_downloads_response_single": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/stream_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/stream_downloads"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "stream_api-response-single": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/stream_api-response-common"
+          }
+        ],
+        "type": "object"
+      },
+      "stream_api-response-common": {
+        "properties": {
+          "errors": {
+            "$ref": "#/components/schemas/stream_messages"
+          },
+          "messages": {
+            "$ref": "#/components/schemas/stream_messages"
+          },
+          "success": {
+            "description": "Whether the API call was successful.",
+            "enum": [
+              true
+            ],
+            "example": true,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success",
+          "errors",
+          "messages"
+        ],
+        "type": "object"
+      },
+      "stream_allowedOrigins": {
+        "description": "Lists the origins allowed to display the video. Enter allowed origin domains in an array and use `*` for wildcard subdomains. Empty arrays allow the video to be viewed on any origin.",
+        "example": [
+          "example.com"
+        ],
+        "items": {
+          "type": "string",
+          "x-auditable": true
+        },
+        "type": "array"
+      },
+      "stream_copyAudioTrack": {
+        "properties": {
+          "label": {
+            "description": "A string to uniquely identify the track amongst other audio track labels for the specified video.",
+            "example": "director commentary",
+            "type": "string"
+          },
+          "url": {
+            "description": "An audio track URL. The server must be publicly routable and support `HTTP HEAD` requests and `HTTP GET` range requests. The server should respond to `HTTP HEAD` requests with a `content-range` header that includes the size of the file.",
+            "example": "https://www.examplestorage.com/audio_file.mp3",
+            "format": "uri",
+            "type": "string",
+            "x-auditable": true
+          }
+        },
+        "required": [
+          "label"
+        ],
+        "type": "object"
+      },
+      "stream_caption_basic_upload": {
+        "properties": {
+          "file": {
+            "description": "The WebVTT file containing the caption or subtitle content.",
+            "example": "@/Users/kyle/Desktop/tr.vtt",
+            "type": "string",
+            "x-auditable": true
+          }
+        },
+        "required": [
+          "file"
+        ],
+        "type": "object"
+      },
+      "stream_video_copy_request": {
+        "properties": {
+          "allowedOrigins": {
+            "$ref": "#/components/schemas/stream_allowedOrigins"
+          },
+          "creator": {
+            "description": "A user-defined identifier for the media creator.",
+            "example": "creator-id_abcde12345",
+            "maxLength": 64,
+            "type": "string"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/stream_media_metadata"
+          },
+          "requireSignedURLs": {
+            "default": false,
+            "description": "Indicates whether the video can be a accessed using the UID. When set to `true`, a signed token must be generated with a signing key to view the video.",
+            "example": true,
+            "type": "boolean"
+          },
+          "scheduledDeletion": {
+            "description": "Indicates the date and time at which the video will be deleted. Omit the field to indicate no change, or include with a `null` value to remove an existing scheduled deletion. If specified, must be at least 30 days from upload time.",
+            "example": "2014-01-02T02:20:00Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "thumbnailTimestampPct": {
+            "default": 0,
+            "description": "The timestamp for a thumbnail image calculated as a percentage value of the video's duration. To convert from a second-wise timestamp to a percentage, divide the desired timestamp by the total duration of the video.  If this value is not set, the default thumbnail image is taken from 0s of the video.",
+            "example": 0.529241,
+            "maximum": 1,
+            "minimum": 0,
+            "type": "number"
+          },
+          "url": {
+            "description": "A video's URL. The server must be publicly routable and support `HTTP HEAD` requests and `HTTP GET` range requests. The server should respond to `HTTP HEAD` requests with a `content-range` header that includes the size of the file.",
+            "example": "https://example.com/myvideo.mp4",
+            "format": "uri",
+            "type": "string"
+          },
+          "watermark": {
+            "$ref": "#/components/schemas/stream_watermark_at_upload"
+          }
+        },
+        "required": [
+          "url"
+        ]
+      },
+      "stream_storage_use_response": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/stream_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "properties": {
+                  "creator": {
+                    "description": "A user-defined identifier for the media creator.",
+                    "example": "creator-id_abcde12345",
+                    "maxLength": 64,
+                    "type": "string"
+                  },
+                  "totalStorageMinutes": {
+                    "description": "The total minutes of video content stored in the account.",
+                    "type": "integer"
+                  },
+                  "totalStorageMinutesLimit": {
+                    "description": "The storage capacity alloted for the account.",
+                    "type": "integer"
+                  },
+                  "videoCount": {
+                    "description": "The total count of videos associated with the account.",
+                    "type": "integer"
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "stream_watermarks": {
+        "properties": {
+          "created": {
+            "description": "The date and a time a watermark profile was created.",
+            "example": "2014-01-02T02:20:00Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "downloadedFrom": {
+            "description": "The source URL for a downloaded image. If the watermark profile was created via direct upload, this field is null.",
+            "example": "https://company.com/logo.png",
+            "type": "string"
+          },
+          "height": {
+            "description": "The height of the image in pixels.",
+            "type": "integer"
+          },
+          "name": {
+            "default": "",
+            "description": "A short description of the watermark profile.",
+            "example": "Marketing Videos",
+            "type": "string"
+          },
+          "opacity": {
+            "default": 1,
+            "description": "The translucency of the image. A value of `0.0` makes the image completely transparent, and `1.0` makes the image completely opaque. Note that if the image is already semi-transparent, setting this to `1.0` will not make the image completely opaque.",
+            "example": 0.75,
+            "maximum": 1,
+            "minimum": 0,
+            "type": "number"
+          },
+          "padding": {
+            "default": 0.05,
+            "description": "The whitespace between the adjacent edges (determined by position) of the video and the image. `0.0` indicates no padding, and `1.0` indicates a fully padded video width or length, as determined by the algorithm.",
+            "example": 0.1,
+            "maximum": 1,
+            "minimum": 0,
+            "type": "number"
+          },
+          "position": {
+            "default": "upperRight",
+            "description": "The location of the image. Valid positions are: `upperRight`, `upperLeft`, `lowerLeft`, `lowerRight`, and `center`. Note that `center` ignores the `padding` parameter.",
+            "example": "center",
+            "type": "string"
+          },
+          "scale": {
+            "default": 0.15,
+            "description": "The size of the image relative to the overall size of the video. This parameter will adapt to horizontal and vertical videos automatically. `0.0` indicates no scaling (use the size of the image as-is), and `1.0 `fills the entire video.",
+            "example": 0.1,
+            "maximum": 1,
+            "minimum": 0,
+            "type": "number"
+          },
+          "size": {
+            "description": "The size of the image in bytes.",
+            "example": 29472,
+            "type": "number"
+          },
+          "uid": {
+            "description": "The unique identifier for a watermark profile.",
+            "example": "ea95132c15732412d22c1476fa83f27a",
+            "maxLength": 32,
+            "type": "string"
+          },
+          "width": {
+            "description": "The width of the image in pixels.",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "stream_webhook_response_single": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/stream_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "type": "object"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "stream_editAudioTrack": {
+        "properties": {
+          "default": {
+            "default": false,
+            "description": "Denotes whether the audio track will be played by default in a player.",
+            "type": "boolean"
+          },
+          "label": {
+            "description": "A string to uniquely identify the track amongst other audio track labels for the specified video.",
+            "example": "director commentary",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "stream_api-response-common-failure": {
+        "properties": {
+          "errors": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/stream_messages"
+              }
+            ],
+            "example": [
+              {
+                "code": 7003,
+                "message": "No route for the URI"
+              }
+            ],
+            "minLength": 1
+          },
+          "messages": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/stream_messages"
+              }
+            ],
+            "example": []
+          },
+          "result": {
+            "enum": [
+              null
+            ],
+            "nullable": true,
+            "type": "object"
+          },
+          "success": {
+            "description": "Whether the API call was successful.",
+            "enum": [
+              false
+            ],
+            "example": false,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success",
+          "errors",
+          "messages",
+          "result"
+        ],
+        "type": "object"
+      },
+      "stream_watermark_at_upload": {
+        "properties": {
+          "uid": {
+            "description": "The unique identifier for the watermark profile.",
+            "example": "ea95132c15732412d22c1476fa83f27a",
+            "maxLength": 32,
+            "type": "string",
+            "x-auditable": true
+          }
+        },
+        "type": "object"
+      },
+      "stream_video_update": {
+        "properties": {
+          "allowedOrigins": {
+            "$ref": "#/components/schemas/stream_allowedOrigins"
+          },
+          "creator": {
+            "description": "A user-defined identifier for the media creator.",
+            "example": "creator-id_abcde12345",
+            "maxLength": 64,
+            "type": "string"
+          },
+          "maxDurationSeconds": {
+            "description": "The maximum duration in seconds for a video upload. Can be set for a video that is not yet uploaded to limit its duration. Uploads that exceed the specified duration will fail during processing. A value of `-1` means the value is unknown.",
+            "maximum": 36000,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/stream_media_metadata"
+          },
+          "requireSignedURLs": {
+            "default": false,
+            "description": "Indicates whether the video can be a accessed using the UID. When set to `true`, a signed token must be generated with a signing key to view the video.",
+            "example": true,
+            "type": "boolean"
+          },
+          "scheduledDeletion": {
+            "description": "Indicates the date and time at which the video will be deleted. Omit the field to indicate no change, or include with a `null` value to remove an existing scheduled deletion. If specified, must be at least 30 days from upload time.",
+            "example": "2014-01-02T02:20:00Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "thumbnailTimestampPct": {
+            "default": 0,
+            "description": "The timestamp for a thumbnail image calculated as a percentage value of the video's duration. To convert from a second-wise timestamp to a percentage, divide the desired timestamp by the total duration of the video.  If this value is not set, the default thumbnail image is taken from 0s of the video.",
+            "example": 0.529241,
+            "maximum": 1,
+            "minimum": 0,
+            "type": "number"
+          },
+          "uploadExpiry": {
+            "description": "The date and time when the video upload URL is no longer valid for direct user uploads.",
+            "example": "2014-01-02T02:20:00Z",
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "stream_videos": {
+        "properties": {
+          "allowedOrigins": {
+            "$ref": "#/components/schemas/stream_allowedOrigins"
+          },
+          "created": {
+            "description": "The date and time the media item was created.",
+            "example": "2014-01-02T02:20:00Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "creator": {
+            "description": "A user-defined identifier for the media creator.",
+            "example": "creator-id_abcde12345",
+            "maxLength": 64,
+            "type": "string"
+          },
+          "duration": {
+            "description": "The duration of the video in seconds. A value of `-1` means the duration is unknown. The duration becomes available after the upload and before the video is ready.",
+            "type": "number"
+          },
+          "input": {
+            "$ref": "#/components/schemas/stream_input"
+          },
+          "liveInput": {
+            "description": "The live input ID used to upload a video with Stream Live.",
+            "example": "fc0a8dc887b16759bfd9ad922230a014",
+            "maxLength": 32,
+            "type": "string"
+          },
+          "maxDurationSeconds": {
+            "description": "The maximum duration in seconds for a video upload. Can be set for a video that is not yet uploaded to limit its duration. Uploads that exceed the specified duration will fail during processing. A value of `-1` means the value is unknown.",
+            "maximum": 36000,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/stream_media_metadata"
+          },
+          "modified": {
+            "description": "The date and time the media item was last modified.",
+            "example": "2014-01-02T02:20:00Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "playback": {
+            "$ref": "#/components/schemas/stream_playback"
+          },
+          "preview": {
+            "description": "The video's preview page URI. This field is omitted until encoding is complete.",
+            "example": "https://customer-m033z5x00ks6nunl.cloudflarestream.com/ea95132c15732412d22c1476fa83f27a/watch",
+            "format": "uri",
+            "type": "string"
+          },
+          "readyToStream": {
+            "description": "Indicates whether the video is playable. The field is empty if the video is not ready for viewing or the live stream is still in progress.",
+            "example": true,
+            "type": "boolean"
+          },
+          "readyToStreamAt": {
+            "description": "Indicates the time at which the video became playable. The field is empty if the video is not ready for viewing or the live stream is still in progress.",
+            "example": "2014-01-02T02:20:00Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "requireSignedURLs": {
+            "default": false,
+            "description": "Indicates whether the video can be a accessed using the UID. When set to `true`, a signed token must be generated with a signing key to view the video.",
+            "example": true,
+            "type": "boolean"
+          },
+          "scheduledDeletion": {
+            "description": "Indicates the date and time at which the video will be deleted. Omit the field to indicate no change, or include with a `null` value to remove an existing scheduled deletion. If specified, must be at least 30 days from upload time.",
+            "example": "2014-01-02T02:20:00Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "size": {
+            "description": "The size of the media item in bytes.",
+            "example": 4190963,
+            "type": "number"
+          },
+          "status": {
+            "$ref": "#/components/schemas/stream_media_status"
+          },
+          "thumbnail": {
+            "description": "The media item's thumbnail URI. This field is omitted until encoding is complete.",
+            "example": "https://customer-m033z5x00ks6nunl.cloudflarestream.com/ea95132c15732412d22c1476fa83f27a/thumbnails/thumbnail.jpg",
+            "format": "uri",
+            "type": "string"
+          },
+          "thumbnailTimestampPct": {
+            "default": 0,
+            "description": "The timestamp for a thumbnail image calculated as a percentage value of the video's duration. To convert from a second-wise timestamp to a percentage, divide the desired timestamp by the total duration of the video.  If this value is not set, the default thumbnail image is taken from 0s of the video.",
+            "example": 0.529241,
+            "maximum": 1,
+            "minimum": 0,
+            "type": "number"
+          },
+          "uid": {
+            "description": "A Cloudflare-generated unique identifier for a media item.",
+            "example": "ea95132c15732412d22c1476fa83f27a",
+            "maxLength": 32,
+            "type": "string"
+          },
+          "uploadExpiry": {
+            "description": "The date and time when the video upload URL is no longer valid for direct user uploads.",
+            "example": "2014-01-02T02:20:00Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "uploaded": {
+            "description": "The date and time the media item was uploaded.",
+            "example": "2014-01-02T02:20:00Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "watermark": {
+            "$ref": "#/components/schemas/stream_watermarks"
+          }
+        },
+        "type": "object"
+      },
+      "stream_clipResponseSingle": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/stream_api-response-common"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/stream_clipping"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "stream_language_response_collection": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/stream_api-response-common"
+          },
+          {
+            "properties": {
+              "result": {
+                "items": {
+                  "$ref": "#/components/schemas/stream_captions"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "stream_additionalAudio": {
+        "properties": {
+          "default": {
+            "default": false,
+            "description": "Denotes whether the audio track will be played by default in a player.",
+            "type": "boolean"
+          },
+          "label": {
+            "description": "A string to uniquely identify the track amongst other audio track labels for the specified video.",
+            "example": "director commentary",
+            "type": "string"
+          },
+          "status": {
+            "description": "Specifies the processing status of the video.",
+            "enum": [
+              "queued",
+              "ready",
+              "error"
+            ],
+            "type": "string"
+          },
+          "uid": {
+            "description": "A Cloudflare-generated unique identifier for a media item.",
+            "example": "ea95132c15732412d22c1476fa83f27a",
+            "maxLength": 32,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "stream_signed_token_request": {
+        "properties": {
+          "accessRules": {
+            "description": "The optional list of access rule constraints on the token. Access can be blocked or allowed based on an IP, IP range, or by country. Access rules are evaluated from first to last. If a rule matches, the associated action is applied and no further rules are evaluated.",
+            "example": [
+              {
+                "action": "block",
+                "country": [
+                  "US",
+                  "MX"
+                ],
+                "type": "ip.geoip.country"
+              },
+              {
+                "action": "allow",
+                "ip": [
+                  "93.184.216.0/24",
+                  "2400:cb00::/32"
+                ],
+                "type": "ip.src"
+              },
+              {
+                "action": "block",
+                "type": "any"
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/stream_accessRules"
+            },
+            "type": "array"
+          },
+          "downloadable": {
+            "default": false,
+            "description": "The optional boolean value that enables using signed tokens to access MP4 download links for a video.",
+            "type": "boolean",
+            "x-auditable": true
+          },
+          "exp": {
+            "description": "The optional unix epoch timestamp that specficies the time after a token is not accepted. The maximum time specification is 24 hours from issuing time. If this field is not set, the default is one hour after issuing.",
+            "type": "integer"
+          },
+          "id": {
+            "description": "The optional ID of a Stream signing key. If present, the `pem` field is also required.",
+            "example": "ab0d4ef71g4425f8dcba9041231813000",
+            "type": "string",
+            "x-auditable": true
+          },
+          "nbf": {
+            "description": "The optional unix epoch timestamp that specifies the time before a the token is not accepted. If this field is not set, the default is one hour before issuing.",
+            "type": "integer",
+            "x-auditable": true
+          },
+          "pem": {
+            "description": "The optional base64 encoded private key in PEM format associated with a Stream signing key. If present, the `id` field is also required.",
+            "example": "LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFcEFJQkFBS0NBUUVBc284dnBvOFpEWXRkOUgzbWlPaW1qYXAzVXlVM0oyZ3kwTUYvN1R4blJuRnkwRHpDCkxqUk9naFZsQ0hPQmxsd3NVaE9GU0lyYnN4K05tUTdBeS90TFpXSGxuVGF3UWJ5WGZGOStJeDhVSnNlSHBGV1oKNVF5Z1JYd2liSjh1MVVsZ2xlcmZHMkpueldjVXpZTzEySktZN3doSkw1ajROMWgxZFJNUXQ5Q1pkZFlCQWRzOQpCdk02cjRFMDcxQkhQekhWeDMrUTI1VWtubGdUNXIwS3FiM1E1Y0dlTlBXY1JreW1ybkJEWWR0OXR4eFFMb1dPCllzNXdsMnVYWFVYL0VGcDMwajU0Nmp6czllWExLYlNDbjJjTDZFVE96Y2x3aG9DRGx2a2VQT05rUE9LMDVKNUMKTm1TdFdhMG9hV1VGRzM0MFl3cVVrWGt4OU9tNndXd1JldU1uU1FJREFRQUJBb0lCQUFJOHo1ck5kOEdtOGJBMgo1S3pxQjI1R2lOVENwbUNJeW53NXRJWHZTQmNHcEdydUcvdlN2WG9kVlFVSVY0TWdHQkVXUEFrVzdsNWVBcHI4CnA1ZFd5SkRXYTNkdklFSE9vSEpYU3dBYksxZzZEMTNVa2NkZ1EyRGpoNVhuWDhHZCtBY2c2SmRTQWgxOWtYSHEKMk54RUtBVDB6Ri83a1g2MkRkREFBcWxmQkpGSXJodVIvZUdEVWh4L2piTTRhQ2JCcFdiM0pnRE9OYm5tS1ZoMwpxS2ZwZmRZZENZU1lzWUxrNTlxRDF2VFNwUVFUQ0VadW9VKzNzRVNhdkJzaUs1bU0vTzY5ZkRMRXNURG1MeTVQCmhEK3BMQXI0SlhNNjFwRGVBS0l3cUVqWWJybXlDRHRXTUdJNnZzZ0E1eXQzUUJaME9vV2w5QUkwdWxoZ3p4dXQKZ2ZFNTRRRUNnWUVBN0F3a0lhVEEzYmQ4Nk9jSVZnNFlrWGk1cm5aNDdsM1k4V24zcjIzUmVISXhLdkllRUtSbgp5bUlFNDFtRVBBSmlGWFpLK1VPTXdkeS9EcnFJUithT1JiT2NiV01jWUg2QzgvbG1wdVJFaXE3SW1Ub3VWcnA4CnlnUkprMWprVDA4cTIvNmg4eTBEdjJqMitsaHFXNzRNOUt0cmwxcTRlWmZRUFREL01tR1NnTWtDZ1lFQXdhY04KaSttN1p6dnJtL3NuekF2VlZ5SEtwZHVUUjNERk1naC9maC9tZ0ZHZ1RwZWtUOVV5b3FleGNYQXdwMVlhL01iQQoyNTVJVDZRbXZZTm5yNXp6Wmxic2tMV0hsYllvbWhmWnVXTHhXR3hRaEFORWdaMFVVdUVTRGMvbWx2UXZHbEtSCkZoaGhBUWlVSmdDamhPaHk1SlBiNGFldGRKd0UxK09lVWRFaE1vRUNnWUVBNG8yZ25CM1o4ck5xa3NzemlBek4KYmNuMlJVbDJOaW9pejBwS3JMaDFaT29NNE5BekpQdjJsaHRQMzdtS0htS1hLMHczRjFqTEgwSTBxZmxFVmVZbQpSU1huakdHazJjUnpBYUVzOGgrQzNheDE0Z01pZUtGU3BqNUpNOEFNbVVZOXQ1cUVhN2FYc3o0V1ZoOUlMYmVTCkRiNzlhKzVwd21LQVBrcnBsTHhyZFdrQ2dZQlNNSHVBWVdBbmJYZ1BDS2FZWklGVWJNUWNacmY0ZnpWQ2lmYksKYWZHampvRlNPZXdEOGdGK3BWdWJRTGwxbkFieU44ek1xVDRaaHhybUhpcFlqMjJDaHV2NmN3RXJtbGRiSnpwQwpBMnRaVXdkTk1ESFlMUG5lUHlZeGRJWnlsUXFVeW14SGkydElUQUxNcWtLOGV3ZWdXZHpkeGhQSlJScU5JazhrCmZIVHhnUUtCZ1FEUFc2UXIxY3F3QjNUdnVWdWR4WGRqUTdIcDFodXhrNEVWaEFJZllKNFhSTW1NUE5YS28wdHUKdUt6LzE0QW14R0dvSWJxYVc1bDMzeFNteUxhem84clNUN0tSTjVKME9JSHcrZkR5SFgxdHpVSjZCTldDcEFTcwpjbWdNK0htSzVON0w2bkNaZFJQY2IwU1hGaVRQUGhCUG1PVWFDUnpER0ZMK2JYM1VwajJKbWc9PQotLS0tLUVORCBSU0EgUFJJVkFURSBLRVktLS0tLQo=",
+            "type": "string",
+            "x-sensitive": true
+          }
+        },
+        "type": "object"
+      },
+      "stream_listAudioTrackResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/stream_api-response-common"
+          },
+          {
+            "properties": {
+              "result": {
+                "items": {
+                  "$ref": "#/components/schemas/stream_additionalAudio"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "stream_downloads": {
+        "properties": {
+          "percentComplete": {
+            "description": "Indicates the progress as a percentage between 0 and 100.",
+            "maximum": 100,
+            "minimum": 0,
+            "type": "number"
+          },
+          "status": {
+            "description": "The status of a generated download.",
+            "enum": [
+              "ready",
+              "inprogress",
+              "error"
+            ],
+            "type": "string"
+          },
+          "url": {
+            "description": "The URL to access the generated download.",
+            "example": "https://customer-m033z5x00ks6nunl.cloudflarestream.com/ea95132c15732412d22c1476fa83f27a/downloads/default.mp4",
+            "format": "uri",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "stream_clipping": {
+        "properties": {
+          "allowedOrigins": {
+            "$ref": "#/components/schemas/stream_allowedOrigins"
+          },
+          "clippedFromVideoUID": {
+            "description": "The unique video identifier (UID).",
+            "example": "023e105f4ecef8ad9ca31a8372d0c353",
+            "maxLength": 32,
+            "type": "string"
+          },
+          "created": {
+            "description": "The date and time the clip was created.",
+            "example": "2014-01-02T02:20:00Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "creator": {
+            "description": "A user-defined identifier for the media creator.",
+            "example": "creator-id_abcde12345",
+            "maxLength": 64,
+            "type": "string"
+          },
+          "endTimeSeconds": {
+            "description": "Specifies the end time for the video clip in seconds.",
+            "type": "integer"
+          },
+          "maxDurationSeconds": {
+            "description": "The maximum duration in seconds for a video upload. Can be set for a video that is not yet uploaded to limit its duration. Uploads that exceed the specified duration will fail during processing. A value of `-1` means the value is unknown.",
+            "maximum": 36000,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/stream_media_metadata"
+          },
+          "modified": {
+            "description": "The date and time the live input was last modified.",
+            "example": "2014-01-02T02:20:00Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "playback": {
+            "$ref": "#/components/schemas/stream_playback"
+          },
+          "preview": {
+            "description": "The video's preview page URI. This field is omitted until encoding is complete.",
+            "example": "https://customer-m033z5x00ks6nunl.cloudflarestream.com/ea95132c15732412d22c1476fa83f27a/watch",
+            "format": "uri",
+            "type": "string"
+          },
+          "requireSignedURLs": {
+            "default": false,
+            "description": "Indicates whether the video can be a accessed using the UID. When set to `true`, a signed token must be generated with a signing key to view the video.",
+            "example": true,
+            "type": "boolean"
+          },
+          "startTimeSeconds": {
+            "description": "Specifies the start time for the video clip in seconds.",
+            "type": "integer"
+          },
+          "status": {
+            "description": "Specifies the processing status for all quality levels for a video.",
+            "enum": [
+              "pendingupload",
+              "downloading",
+              "queued",
+              "inprogress",
+              "ready",
+              "error",
+              "live-inprogress"
+            ],
+            "example": "inprogress",
+            "type": "string"
+          },
+          "thumbnailTimestampPct": {
+            "default": 0,
+            "description": "The timestamp for a thumbnail image calculated as a percentage value of the video's duration. To convert from a second-wise timestamp to a percentage, divide the desired timestamp by the total duration of the video.  If this value is not set, the default thumbnail image is taken from 0s of the video.",
+            "example": 0.529241,
+            "maximum": 1,
+            "minimum": 0,
+            "type": "number"
+          },
+          "watermark": {
+            "$ref": "#/components/schemas/stream_watermarkAtUpload"
+          }
+        }
+      },
+      "stream_media_metadata": {
+        "description": "A user modifiable key-value store used to reference other systems of record for managing videos.",
+        "example": {
+          "name": "video12345.mp4"
+        },
+        "type": "object"
+      },
+      "stream_messages": {
+        "example": [],
+        "items": {
+          "properties": {
+            "code": {
+              "minimum": 1000,
+              "type": "integer"
+            },
+            "documentation_url": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "source": {
+              "properties": {
+                "pointer": {
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ],
+          "type": "object",
+          "uniqueItems": true
+        },
+        "type": "array"
+      },
+      "stream_accessRules": {
+        "description": "Defines rules for fine-grained control over content than signed URL tokens alone. Access rules primarily make tokens conditionally valid based on user information. Access Rules are specified on token payloads as the `accessRules` property containing an array of Rule objects.",
+        "properties": {
+          "action": {
+            "description": "The action to take when a request matches a rule. If the action is `block`, the signed token blocks views for viewers matching the rule.",
+            "enum": [
+              "allow",
+              "block"
+            ],
+            "example": "allow",
+            "type": "string",
+            "x-auditable": true
+          },
+          "country": {
+            "description": "An array of 2-letter country codes in ISO 3166-1 Alpha-2 format used to match requests.",
+            "items": {
+              "type": "string",
+              "x-auditable": true
+            },
+            "type": "array"
+          },
+          "ip": {
+            "description": "An array of IPv4 or IPV6 addresses or CIDRs used to match requests.",
+            "items": {
+              "type": "string",
+              "x-auditable": true
+            },
+            "type": "array"
+          },
+          "type": {
+            "description": "Lists available rule types to match for requests. An `any` type matches all requests and can be used as a wildcard to apply default actions after other rules.",
+            "enum": [
+              "any",
+              "ip.src",
+              "ip.geoip.country"
+            ],
+            "example": "ip.src",
+            "type": "string",
+            "x-auditable": true
+          }
+        },
+        "type": "object"
+      },
+      "stream_playback": {
+        "properties": {
+          "dash": {
+            "description": "DASH Media Presentation Description for the video.",
+            "example": "https://customer-m033z5x00ks6nunl.cloudflarestream.com/ea95132c15732412d22c1476fa83f27a/manifest/video.mpd",
+            "type": "string",
+            "x-auditable": true
+          },
+          "hls": {
+            "description": "The HLS manifest for the video.",
+            "example": "https://customer-m033z5x00ks6nunl.cloudflarestream.com/ea95132c15732412d22c1476fa83f27a/manifest/video.m3u8",
+            "type": "string",
+            "x-auditable": true
+          }
+        },
+        "type": "object"
+      },
+      "stream_keys": {
+        "properties": {
+          "created": {
+            "description": "The date and time a signing key was created.",
+            "example": "2014-01-02T02:20:00Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "description": "Identifier.",
+            "example": "023e105f4ecef8ad9ca31a8372d0c353",
+            "maxLength": 32,
+            "type": "string"
+          },
+          "jwk": {
+            "description": "The signing key in JWK format.",
+            "example": "eyJ1c2UiOiJzaWciLCJrdHkiOiJSU0EiLCJraWQiOiI1MjEzY2ZhMTIxZjcwYjhjMTM4MDY4NmZmYzM3MWJhMyIsImFsZyI6IlJTMjU2IiwibiI6IjBUandqT2laV21KNDN2ZjNUbzREb1htWFd0SkdOR3lYZmh5dHRMYUJnRjEtRVFXUURLaG9LYm9hS21xakNBc21za3V0YkxVN1BVOGRrUU5ER1p3S3VWczA4elNaNGt4aTR0RWdQUFp5dDdkWEMtbFlSWW95ckFHRjRBWGh5MzI5YkhDUDFJbHJCQl9Ba0dnbmRMQWd1bnhZMHJSZ2N2T3ppYXc2S0p4Rm5jMlVLMFdVOGIwcDRLS0hHcDFLTDlkazBXVDhkVllxYmVSaUpqQ2xVRW1oOHl2OUNsT1ZhUzRLeGlYNnhUUTREWnc2RGFKZklWM1F0Tmd2cG1ieWxOSmFQSG5zc3JodDJHS1A5NjJlS2poUVJsaWd2SFhKTE9uSm9KZkxlSUVIWi1peFdmY1RETUg5MnNHdm93MURPanhMaUNOMXpISy1oN2JMb1hUaUxnYzRrdyIsImUiOiJBUUFCIiwiZCI6IndpQWEwaU5mWnNYSGNOcVMxSWhnUmdzVHJHay1TcFlYV2lReDZHTU9kWlJKekhGazN0bkRERFJvNHNKZTBxX0dEOWkzNlEyZkVadS15elpEcEJkc3U5OHNtaHhNU19Ta0s5X3VFYUo1Zm96V2IyN3JRRnFoLVliUU9MUThkUnNPRHZmQl9Hb2txWWJzblJDR3kzWkFaOGZJZ25ocXBUNEpiOHdsaWxpMUgxeFpzM3RnTWtkTEluTm1yMFAtcTYxZEtNd3JYZVRoSWNEc0kyb2Z1LTFtRm1MWndQb2ZGbmxaTW9QN1pfRU5pUGNfWGtWNzFhaHBOZE9pcW5ablZtMHBCNE5QS1UweDRWTjQyYlAzWEhMUmpkV2hJOGt3SC1BdXhqb3BLaHJ0R2tvcG1jZFRkM1ZRdElaOGRpZHByMXpBaEpvQi16ZVlIaTFUel9ZSFFld0FRUSIsInAiOiIyVTZFVUJka3U3TndDYXoyNzZuWGMxRXgwVHpNZjU4U0UtU2M2eUNaYWk2TkwzVURpWi1mNHlIdkRLYnFGUXdLWDNwZ0l2aVE3Y05QYUpkbE9NeS1mU21GTXU3V3hlbVZYamFlTjJCMkRDazhQY0NEOVgxU2hhR3E1ZUdSSHNObVUtSDNxTG1FRGpjLWliazRHZ0RNb2lVYjQ2OGxFZHAwU2pIOXdsOUdsYTgiLCJxIjoiOW5ucXg5ZnNNY2dIZ29DemhfVjJmaDhoRUxUSUM5aFlIOVBCTG9aQjZIaE1TWG1ja1BSazVnUlpPWlFEN002TzlMaWZjNmFDVXdEbjBlQzU2YkFDNUNrcWxjODJsVDhzTWlMeWJyTjh3bWotcjNjSTBGQTlfSGQySEY1ZkgycnJmenVqd0NWM3czb09Ud3p4d1g3c2xKbklRanphel91SzEyWEtucVZZcUYwIiwiZHAiOiJxQklTUTlfVUNWaV9Ucng0UU9VYnZoVU9jc2FUWkNHajJiNzNudU9YeElnOHFuZldSSnN4RG5zd2FKaXdjNWJjYnZ3M1h0VGhRd1BNWnhpeE1UMHFGNlFGWVY5WXZibnJ6UEp4YkdNdTZqajZYc2lIUjFlbWU3U09lVDM4Xzg0aFZyOXV6UkN2RWstb0R0MHlodW9YVzFGWVFNRTE2cGtMV0ZkUjdRUERsQUUiLCJkcSI6Im5zQUp3eXZFbW8tdW5wU01qYjVBMHB6MExCRjBZNFMxeGRJYXNfLVBSYzd0dThsVFdWMl8teExEOFR6dmhqX0lmY0RJR3JJZGNKNjlzVVZnR1M3ZnZkcng3Y21uNjFyai1XcmU0UVJFRC1lV1dxZDlpc2FVRmg5UGVKZ2tCbFZVVnYtdnladVlWdFF2a1NUU05ZR3RtVXl2V2xKZDBPWEFHRm9jdGlfak9aVSIsInFpIjoib0dYaWxLQ2NKRXNFdEE1eG54WUdGQW5UUjNwdkZLUXR5S0F0UGhHaHkybm5ya2VzN1RRaEFxMGhLRWZtU1RzaE1hNFhfd05aMEstX1F0dkdoNDhpeHdTTDVLTEwxZnFsY0k2TF9XUnF0cFQxS21LRERlUHR2bDVCUzFGbjgwSGFwR215cmZRWUU4S09QR2UwUl82S1BOZE1vc3dYQ3Nfd0RYMF92ZzNoNUxRIn0=",
+            "type": "string"
+          },
+          "pem": {
+            "description": "The signing key in PEM format.",
+            "example": "LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFcGdJQkFBS0NBUUVBMFRqd2pPaVpXbUo0M3ZmM1RvNERvWG1YV3RKR05HeVhmaHl0dExhQmdGMStFUVdRCkRLaG9LYm9hS21xakNBc21za3V0YkxVN1BVOGRrUU5ER1p3S3VWczA4elNaNGt4aTR0RWdQUFp5dDdkWEMrbFkKUllveXJBR0Y0QVhoeTMyOWJIQ1AxSWxyQkIvQWtHZ25kTEFndW54WTByUmdjdk96aWF3NktKeEZuYzJVSzBXVQo4YjBwNEtLSEdwMUtMOWRrMFdUOGRWWXFiZVJpSmpDbFVFbWg4eXY5Q2xPVmFTNEt4aVg2eFRRNERadzZEYUpmCklWM1F0Tmd2cG1ieWxOSmFQSG5zc3JodDJHS1A5NjJlS2poUVJsaWd2SFhKTE9uSm9KZkxlSUVIWitpeFdmY1QKRE1IOTJzR3ZvdzFET2p4TGlDTjF6SEsraDdiTG9YVGlMZ2M0a3dJREFRQUJBb0lCQVFEQ0lCclNJMTlteGNkdwoycExVaUdCR0N4T3NhVDVLbGhkYUpESG9ZdzUxbEVuTWNXVGUyY01NTkdqaXdsN1NyOFlQMkxmcERaOFJtNzdMCk5rT2tGMnk3M3l5YUhFeEw5S1FyMys0Um9ubCtqTlp2YnV0QVdxSDVodEE0dER4MUd3NE85OEg4YWlTcGh1eWQKRUliTGRrQm54OGlDZUdxbFBnbHZ6Q1dLV0xVZlhGbXplMkF5UjBzaWMyYXZRLzZyclYwb3pDdGQ1T0Vod093agphaCs3N1dZV1l0bkEraDhXZVZreWcvdG44UTJJOXo5ZVJYdlZxR2sxMDZLcWRtZFdiU2tIZzA4cFRUSGhVM2paCnMvZGNjdEdOMWFFanlUQWY0QzdHT2lrcUd1MGFTaW1aeDFOM2RWQzBobngySjJtdlhNQ0VtZ0g3TjVnZUxWUFAKOWdkQjdBQkJBb0dCQU5sT2hGQVhaTHV6Y0Ftczl1K3AxM05STWRFOHpIK2ZFaFBrbk9zZ21Xb3VqUzkxQTRtZgpuK01oN3d5bTZoVU1DbDk2WUNMNGtPM0RUMmlYWlRqTXZuMHBoVEx1MXNYcGxWNDJuamRnZGd3cFBEM0FnL1Y5ClVvV2hxdVhoa1I3RFpsUGg5Nmk1aEE0M1BvbTVPQm9BektJbEcrT3ZKUkhhZEVveC9jSmZScFd2QW9HQkFQWjUKNnNmWDdESElCNEtBczRmMWRuNGZJUkMweUF2WVdCL1R3UzZHUWVoNFRFbDVuSkQwWk9ZRVdUbVVBK3pPanZTNApuM09tZ2xNQTU5SGd1ZW13QXVRcEtwWFBOcFUvTERJaThtNnpmTUpvL3E5M0NOQlFQZngzZGh4ZVh4OXE2Mzg3Cm84QWxkOE42RGs4TThjRis3SlNaeUVJODJzLzdpdGRseXA2bFdLaGRBb0dCQUtnU0VrUGYxQWxZdjA2OGVFRGwKRzc0VkRuTEdrMlFobzltKzk1N2psOFNJUEtwMzFrU2JNUTU3TUdpWXNIT1czRzc4TjE3VTRVTUR6R2NZc1RFOQpLaGVrQldGZldMMjU2OHp5Y1d4akx1bzQrbDdJaDBkWHBudTBqbms5L1AvT0lWYS9iczBRcnhKUHFBN2RNb2JxCkYxdFJXRURCTmVxWkMxaFhVZTBEdzVRQkFvR0JBSjdBQ2NNcnhKcVBycDZVakkyK1FOS2M5Q3dSZEdPRXRjWFMKR3JQL2owWE83YnZKVTFsZHYvc1N3L0U4NzRZL3lIM0F5QnF5SFhDZXZiRkZZQmt1MzczYThlM0pwK3RhNC9scQozdUVFUkEvbmxscW5mWXJHbEJZZlQzaVlKQVpWVkZiL3I4bWJtRmJVTDVFazBqV0JyWmxNcjFwU1hkRGx3QmhhCkhMWXY0em1WQW9HQkFLQmw0cFNnbkNSTEJMUU9jWjhXQmhRSjAwZDZieFNrTGNpZ0xUNFJvY3RwNTY1SHJPMDAKSVFLdElTaEg1a2s3SVRHdUYvOERXZEN2djBMYnhvZVBJc2NFaStTaXk5WDZwWENPaS8xa2FyYVU5U3BpZ3czago3YjVlUVV0UlovTkIycVJwc3EzMEdCUENqanhudEVmK2lqelhUS0xNRndyUDhBMTlQNzRONGVTMAotLS0tLUVORCBSU0EgUFJJVkFURSBLRVktLS0tLQo=",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "stream_watermarkAtUpload": {
+        "properties": {
+          "uid": {
+            "description": "The unique identifier for the watermark profile.",
+            "example": "ea95132c15732412d22c1476fa83f27a",
+            "maxLength": 32,
+            "type": "string",
+            "x-auditable": true
+          }
+        },
+        "type": "object"
+      },
+      "stream_media_status": {
+        "description": "Specifies a detailed status for a video. If the `state` is `inprogress` or `error`, the `step` field returns `encoding` or `manifest`. If the `state` is `inprogress`, `pctComplete` returns a number between 0 and 100 to indicate the approximate percent of completion. If the `state` is `error`, `errorReasonCode` and `errorReasonText` provide additional details.",
+        "properties": {
+          "errorReasonCode": {
+            "description": "Specifies why the video failed to encode. This field is empty if the video is not in an `error` state. Preferred for programmatic use.",
+            "example": "ERR_NON_VIDEO",
+            "type": "string"
+          },
+          "errorReasonText": {
+            "description": "Specifies why the video failed to encode using a human readable error message in English. This field is empty if the video is not in an `error` state.",
+            "example": "The file was not recognized as a valid video file.",
+            "type": "string"
+          },
+          "pctComplete": {
+            "description": "Indicates the progress as a percentage between 0 and 100.",
+            "maximum": 100,
+            "minimum": 0,
+            "type": "string"
+          },
+          "state": {
+            "description": "Specifies the processing status for all quality levels for a video.",
+            "enum": [
+              "pendingupload",
+              "downloading",
+              "queued",
+              "inprogress",
+              "ready",
+              "error",
+              "live-inprogress"
+            ],
+            "example": "inprogress",
+            "type": "string"
+          }
+        }
+      },
+      "stream_input": {
+        "properties": {
+          "height": {
+            "description": "The video height in pixels. A value of `-1` means the height is unknown. The value becomes available after the upload and before the video is ready.",
+            "type": "integer",
+            "x-auditable": true
+          },
+          "width": {
+            "description": "The video width in pixels. A value of `-1` means the width is unknown. The value becomes available after the upload and before the video is ready.",
+            "type": "integer",
+            "x-auditable": true
+          }
+        },
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "api_email": {
+        "in": "header",
+        "name": "X-Auth-Email",
+        "type": "apiKey"
+      },
+      "api_key": {
+        "in": "header",
+        "name": "X-Auth-Key",
+        "type": "apiKey"
+      },
+      "api_token": {
+        "scheme": "bearer",
+        "type": "http"
+      },
+      "user_service_key": {
+        "in": "header",
+        "name": "X-Auth-User-Service-Key",
+        "type": "apiKey"
+      }
+    }
+  }
+}

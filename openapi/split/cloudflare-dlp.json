@@ -1,0 +1,6413 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Cloudflare API - DLP",
+    "version": "4.0.0"
+  },
+  "servers": [
+    {
+      "description": "Client API",
+      "url": "https://api.cloudflare.com/client/v4"
+    }
+  ],
+  "security": [
+    {
+      "api_email": [],
+      "api_key": []
+    },
+    {
+      "api_token": []
+    },
+    {
+      "user_service_key": []
+    }
+  ],
+  "paths": {
+    "/accounts/{account_id}/dlp/datasets": {
+      "get": {
+        "description": "Lists all DLP datasets configured for the account, including custom word lists and EDM datasets.",
+        "operationId": "dlp-datasets-read-all",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_DatasetArray"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Datasets read successfully."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Datasets read failed."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Fetch all datasets",
+        "tags": [
+          "DLP Datasets"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Read",
+          "Zero Trust Write"
+        ]
+      },
+      "post": {
+        "description": "Creates a new DLP (Data Loss Prevention) dataset for storing custom detection patterns. Datasets can contain exact match data, word lists, or EDM (Exact Data Match) configurations.",
+        "operationId": "dlp-datasets-create",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "case_sensitive": {
+                    "description": "Only applies to custom word lists.\nDetermines if the words should be matched in a case-sensitive manner\nCannot be set to false if `secret` is true or undefined",
+                    "type": "boolean"
+                  },
+                  "description": {
+                    "description": "The description of the dataset.",
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "encoding_version": {
+                    "description": "Dataset encoding version\n\nNon-secret custom word lists with no header are always version 1.\nSecret EDM lists with no header are version 1.\nMulticolumn CSV with headers are version 2.\nOmitting this field provides the default value 0, which is interpreted\nthe same as 1.",
+                    "format": "int32",
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "secret": {
+                    "description": "Generate a secret dataset.\n\nIf true, the response will include a secret to use with the EDM encoder.\nIf false, the response has no secret and the dataset is uploaded in plaintext.",
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "description": "Dataset description.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_DatasetCreation"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Dataset created successfully."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Dataset creation failed."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Create a new dataset",
+        "tags": [
+          "DLP Datasets"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/dlp/datasets/{dataset_id}": {
+      "delete": {
+        "description": "This deletes all versions of the dataset.",
+        "operationId": "dlp-datasets-delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "dataset_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dataset deleted successfully."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Dataset delete failed."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Delete a dataset",
+        "tags": [
+          "DLP Datasets"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      },
+      "get": {
+        "operationId": "dlp-datasets-read",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "dataset_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_Dataset"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Dataset read successfully."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Dataset read failed."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Fetch a specific dataset",
+        "tags": [
+          "DLP Datasets"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Read",
+          "Zero Trust Write"
+        ]
+      },
+      "put": {
+        "description": "Updates the configuration of an existing DLP dataset, such as its name, description, or detection settings.",
+        "operationId": "dlp-datasets-update",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "dataset_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "case_sensitive": {
+                    "description": "Determines if the words should be matched in a case-sensitive manner.\n\nOnly required for custom word lists.",
+                    "type": "boolean"
+                  },
+                  "description": {
+                    "description": "The description of the dataset.",
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "name": {
+                    "description": "The name of the dataset, must be unique.",
+                    "nullable": true,
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          },
+          "description": "Dataset description.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_Dataset"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Dataset updated successfully."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Dataset update failed."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Update details about a dataset",
+        "tags": [
+          "DLP Datasets"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/dlp/datasets/{dataset_id}/upload": {
+      "post": {
+        "description": "Creates a new version of a DLP dataset, allowing you to stage changes before activation. Used for single-column EDM and custom word lists.",
+        "operationId": "dlp-datasets-create-version",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "dataset_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_DatasetNewVersion"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Dataset version created successfully."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Dataset version creation failed."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Prepare to upload a new version of a dataset",
+        "tags": [
+          "DLP Datasets"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/dlp/datasets/{dataset_id}/upload/{version}": {
+      "post": {
+        "description": "This is used for single-column EDMv1 and Custom Word Lists. The EDM format\ncan only be created in the Cloudflare dashboard. For other clients, this\noperation can only be used for non-secret Custom Word Lists. The body must\nbe a UTF-8 encoded, newline (NL or CRNL) separated list of words to be matched.",
+        "operationId": "dlp-datasets-upload-version",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "dataset_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "version",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/octet-stream": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            }
+          },
+          "description": "Dataset. For custom wordlists this contains UTF-8 patterns separated by newline characters.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_Dataset"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Dataset version uploaded successfully."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Dataset version upload failed."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Upload a new version of a dataset",
+        "tags": [
+          "DLP Datasets"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/dlp/datasets/{dataset_id}/versions/{version}": {
+      "post": {
+        "description": "This is used for multi-column EDMv2 datasets. The EDMv2 format can only be\ncreated in the Cloudflare dashboard. The columns in the response appear in\nthe same order as in the request.",
+        "operationId": "dlp-datasets-define-columns",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "dataset_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "version",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "items": {
+                  "allOf": [
+                    {
+                      "oneOf": [
+                        {
+                          "properties": {
+                            "entry_id": {
+                              "format": "uuid",
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "entry_id"
+                          ],
+                          "title": "Existing Column",
+                          "type": "object"
+                        },
+                        {
+                          "properties": {
+                            "entry_name": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "entry_name"
+                          ],
+                          "title": "New Column",
+                          "type": "object"
+                        }
+                      ]
+                    },
+                    {
+                      "properties": {
+                        "header_name": {
+                          "type": "string"
+                        },
+                        "num_cells": {
+                          "format": "int64",
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "header_name",
+                        "num_cells"
+                      ],
+                      "type": "object"
+                    }
+                  ]
+                },
+                "type": "array"
+              }
+            }
+          },
+          "description": "array of new columns to create for this dataset version.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_DatasetColumnArray"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Dataset columns created successfully."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Failed to create dataset columns."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Sets the column information for a multi-column upload",
+        "tags": [
+          "DLP Datasets"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/dlp/datasets/{dataset_id}/versions/{version}/entries/{entry_id}": {
+      "post": {
+        "description": "This is used for multi-column EDMv2 datasets. The EDMv2 format can only be\ncreated in the Cloudflare dashboard.",
+        "operationId": "dlp-datasets-upload-dataset-column",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "dataset_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "version",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "entry_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/octet-stream": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            }
+          },
+          "description": "Dataset content.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_DatasetColumn"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Dataset column uploaded successfully."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Failed to upload dataset column."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Upload a new version of a multi-column dataset",
+        "tags": [
+          "DLP Datasets"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/dlp/document_fingerprints": {
+      "get": {
+        "description": "Lists all document fingerprints configured for DLP scanning in the account.",
+        "operationId": "dlp-document-fingerprints-read-all",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_DocumentFingerprintArray"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Document fingerprint read was successful."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Document fingerprint read failed."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Retrieve data about all document fingerprints.",
+        "tags": [
+          "DLP Document Fingerprints"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Read",
+          "Zero Trust Write"
+        ]
+      },
+      "post": {
+        "description": "Creates a new document fingerprint for DLP scanning. Document fingerprints detect documents that are structurally similar to the uploaded sample.",
+        "operationId": "dlp-document-fingerprints-create",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "description": {
+                    "default": "",
+                    "type": "string"
+                  },
+                  "match_percent": {
+                    "format": "int32",
+                    "type": "integer"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "match_percent"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "description": "Attributes of the new document fingerprint.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_DocumentFingerprint"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Document fingerprint created successfully."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Document fingerprint creation failed."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Creates a new document fingerprint.",
+        "tags": [
+          "DLP Document Fingerprints"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/dlp/document_fingerprints/{document_fingerprint_id}": {
+      "delete": {
+        "description": "Removes a document fingerprint from DLP configuration. Documents matching this fingerprint will no longer be detected.",
+        "operationId": "dlp-document-fingerprints-delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "document_fingerprint_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Document fingerprint delete was successful."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Document fingerprint delete failed."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Delete a single document fingerprint.",
+        "tags": [
+          "DLP Document Fingerprints"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      },
+      "get": {
+        "operationId": "dlp-document-fingerprints-read",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "document_fingerprint_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_DocumentFingerprint"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Document fingerprint read was successful."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Document fingerprint read failed."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Retrieve data about a specific document fingerprint.",
+        "tags": [
+          "DLP Document Fingerprints"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Read",
+          "Zero Trust Write"
+        ]
+      },
+      "post": {
+        "description": "Updates metadata for an existing document fingerprint, such as its name or description.",
+        "operationId": "dlp-document-fingerprints-update",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "document_fingerprint_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dlp_UpdateDocumentFingerprint"
+              }
+            }
+          },
+          "description": "Attributes of the document fingerprint to update.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_DocumentFingerprint"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Document fingerprint read was successful."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Document fingerprint read failed."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Update the attributes of a single document fingerprint.",
+        "tags": [
+          "DLP Document Fingerprints"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      },
+      "put": {
+        "description": "Uploads a new document to create or update a fingerprint. The document structure is analyzed to enable detection of similar documents.",
+        "operationId": "dlp-document-fingerprints-upload",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "document_fingerprint_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "properties": {
+                  "file": {
+                    "format": "binary",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "description": "File used for document fingerprinting.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_DocumentFingerprintUpload"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "File uploaded successfully."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Failed to upload file."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Uploads a new version for a document fingerprint.",
+        "tags": [
+          "DLP Document Fingerprints"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/dlp/email/account_mapping": {
+      "get": {
+        "description": "Retrieves the email provider mapping configuration for DLP email scanning.",
+        "operationId": "dlp-email-scanner-get-account-mapping",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_AddinAccountMapping"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Get Email Scanner Account Mapping response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Get Email Scanner Account Mapping failure response."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Get mapping",
+        "tags": [
+          "DLP Email"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Read",
+          "Zero Trust Write"
+        ]
+      },
+      "post": {
+        "description": "Creates a mapping between a Cloudflare account and an email provider for DLP email scanning integration.",
+        "operationId": "dlp-email-scanner-create-account-mapping",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dlp_UpdateAddinAccountMapping"
+              }
+            }
+          },
+          "description": "Account mapping.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_AddinAccountMapping"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "New Email Scanner Account Mapping response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "New Email Scanner Account Mapping failure response."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Create mapping",
+        "tags": [
+          "DLP Email"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/dlp/email/rules": {
+      "get": {
+        "description": "Lists all email scanner rules for an account.",
+        "operationId": "dlp-email-scanner-list-all-rules",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_EmailRuleArray"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "List all email scanner rules response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "List all email scanner rules failure response."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "List all email scanner rules",
+        "tags": [
+          "DLP Email"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Read",
+          "Zero Trust Write"
+        ]
+      },
+      "patch": {
+        "description": "Reorders DLP email scanning rules by updating their priority values. Higher priority rules are evaluated first.",
+        "operationId": "dlp-email-scanner-update-rule-priorities",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dlp_UpdateEmailRulePriorities"
+              }
+            }
+          },
+          "description": "Rule priorities.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_EmailRule"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Update Email Scanner Rule priorities response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Update Email Scanner Rule priorities failure response."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Update email scanner rule priorities",
+        "tags": [
+          "DLP Email"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      },
+      "post": {
+        "description": "Creates a new DLP email scanning rule that defines what content patterns to detect in email messages and what actions to take.",
+        "operationId": "dlp-email-scanner-create-rule",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dlp_CreateEmailRule"
+              }
+            }
+          },
+          "description": "Rule description.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_EmailRule"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "New Email Scanner Rule response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "New Email Scanner Rule failure response."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Create email scanner rule",
+        "tags": [
+          "DLP Email"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/dlp/email/rules/{rule_id}": {
+      "delete": {
+        "description": "Removes a DLP email scanning rule. The rule will no longer be applied to email messages.",
+        "operationId": "dlp-email-scanner-delete-rule",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "rule_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_EmailRule"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Delete Email Scanner Rule response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Delete Email Scanner Rule failure response."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Delete email scanner rule",
+        "tags": [
+          "DLP Email"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      },
+      "get": {
+        "description": "Gets detailed configuration for a specific DLP email scanning rule, including detection patterns and actions.",
+        "operationId": "dlp-email-scanner-get-rule",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "rule_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_EmailRule"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Get Email Scanner Rule response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Get Email Scanner Rule failure response."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Get an email scanner rule",
+        "tags": [
+          "DLP Email"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Read",
+          "Zero Trust Write"
+        ]
+      },
+      "put": {
+        "operationId": "dlp-email-scanner-update-rule",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "rule_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dlp_CreateEmailRule"
+              }
+            }
+          },
+          "description": "Rule description.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_EmailRule"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Update Email Scanner Rule response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Update Email Scanner Rule failure response."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Update email scanner rule",
+        "tags": [
+          "DLP Email"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/dlp/entries": {
+      "get": {
+        "description": "Lists all DLP entries in an account.",
+        "operationId": "dlp-entries-list-all-entries",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "items": {
+                            "$ref": "#/components/schemas/dlp_EntryWithUploadStatus"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "List all entries response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "List all entries failure response."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "List all entries",
+        "tags": [
+          "DLP Entries"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Read",
+          "Zero Trust Write"
+        ]
+      },
+      "post": {
+        "description": "Creates a DLP custom entry.",
+        "operationId": "dlp-entries-create-entry",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dlp_NewEntry"
+              }
+            }
+          },
+          "description": "A new entry to create.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_CustomEntry"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Create new custom entry response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Create new custom entry failure response."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Create custom entry",
+        "tags": [
+          "DLP Entries"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/dlp/entries/custom/{entry_id}": {
+      "put": {
+        "description": "Updates a DLP custom entry.",
+        "operationId": "dlp-entries-update-custom-entry",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "entry_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dlp_CustomEntryUpdate"
+              }
+            }
+          },
+          "description": "Update to be applied to the entry.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_CustomEntry"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Update entry response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Update entry failure response."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Update custom entry",
+        "tags": [
+          "DLP Entries"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/dlp/entries/integration": {
+      "post": {
+        "description": "Integration entries can't be created, this will update an existing integration entry.\nThis is needed for our generated terraform API.",
+        "operationId": "dlp-entries-create-integration-entry",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dlp_NewPredefinedEntry"
+              }
+            }
+          },
+          "description": "This endpoint will update an existing integration entry. It is not possible to create new integration entries.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_IntegrationEntry"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Create integration entry response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Create entry failure response."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Create integration entry",
+        "tags": [
+          "DLP Integration Entries"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/dlp/entries/integration/{entry_id}": {
+      "delete": {
+        "description": "This is a no-op as integration entires can't be deleted but is needed for our generated terraform API.",
+        "operationId": "dlp-entries-delete-integration-entry",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "entry_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_Empty"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Delete integration entry response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Delete entry failure response."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Delete integration entry",
+        "tags": [
+          "DLP Integration Entries"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      },
+      "put": {
+        "description": "Updates a DLP entry.",
+        "operationId": "dlp-entries-update-integration-entry",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "entry_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dlp_PredefinedEntryUpdate"
+              }
+            }
+          },
+          "description": "Enable or disable integration entry in owning profile.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_IntegrationEntry"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Update integration entry response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Update entry failure response."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Update integration entry",
+        "tags": [
+          "DLP Integration Entries"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/dlp/entries/predefined": {
+      "post": {
+        "description": "Predefined entries can't be created, this will update an existing predefined entry.\nThis is needed for our generated terraform API.",
+        "operationId": "dlp-entries-create-predefined-entry",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dlp_NewPredefinedEntry"
+              }
+            }
+          },
+          "description": "This endpoint will update an existing predefined entry. It is not possible to create new predefined entries.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_PredefinedEntry"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Create predefined entry response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Create entry failure response."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Create predefined entry",
+        "tags": [
+          "DLP Predefined Entries"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/dlp/entries/predefined/{entry_id}": {
+      "delete": {
+        "description": "This is a no-op as predefined entires can't be deleted but is needed for our generated terraform API.",
+        "operationId": "dlp-entries-delete-predefined-entry",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "entry_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_Empty"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Delete predefined entry response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Delete entry failure response."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Delete predefined entry",
+        "tags": [
+          "DLP Predefined Entries"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      },
+      "put": {
+        "description": "Updates a DLP entry.",
+        "operationId": "dlp-entries-update-predefined-entry",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "entry_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dlp_PredefinedEntryUpdate"
+              }
+            }
+          },
+          "description": "Settings to enable or disable predefined entry in owning profile.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_PredefinedEntry"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Update predefined entry response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Update entry failure response."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Update predefined entry",
+        "tags": [
+          "DLP Entries"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/dlp/entries/{entry_id}": {
+      "delete": {
+        "description": "Deletes a DLP custom entry.",
+        "operationId": "dlp-entries-delete-entry",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "entry_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_Empty"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Delete custom entry response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Delete custom entry failure response."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Delete custom entry",
+        "tags": [
+          "DLP Entries"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      },
+      "get": {
+        "description": "Fetches a DLP entry by ID.",
+        "operationId": "dlp-entries-get-dlp-entry",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "entry_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_EntryWithSharedProfiles"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Get entry response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Get entry failure response."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Get DLP Entry",
+        "tags": [
+          "DLP Entries"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Read",
+          "Zero Trust Write"
+        ]
+      },
+      "put": {
+        "description": "Updates a DLP entry.",
+        "operationId": "dlp-entries-update-entry",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "entry_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dlp_EntryUpdate"
+              }
+            }
+          },
+          "description": "Update to be applied to the entry.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_Entry"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Update entry response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Update entry failure response."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Update entry",
+        "tags": [
+          "DLP Entries"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/dlp/limits": {
+      "get": {
+        "description": "Retrieves current DLP usage limits and quotas for the account, including dataset limits and scan quotas.",
+        "operationId": "dlp-limits-get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_Limits"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Limits retrieved successfully."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Limits get failed."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Fetch limits associated with DLP for account",
+        "tags": [
+          "DLP Settings"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Read",
+          "Zero Trust Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/dlp/patterns/validate": {
+      "post": {
+        "description": "Validates whether this pattern is a valid regular expression. Rejects it if\nthe regular expression is too complex or can match an unbounded-length\nstring. The regex will be rejected if it uses `*` or `+`. Bound the maximum\nnumber of characters that can be matched using a range, e.g. `{1,100}`.",
+        "operationId": "dlp-pattern-validate",
+        "parameters": [
+          {
+            "description": "Account ID.",
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dlp_RegexValidationQuery"
+              }
+            }
+          },
+          "description": "Validation query.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_RegexValidationResult"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Validation response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Failed to validate."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Validate a DLP regex pattern",
+        "tags": [
+          "DLP Settings"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/dlp/payload_log": {
+      "get": {
+        "description": "Gets the current payload logging configuration for DLP, showing whether matched content is being logged.",
+        "operationId": "dlp-payload-log-get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_PayloadLogSetting"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Payload log settings."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Failed to get payload log settings."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Get payload log settings",
+        "tags": [
+          "DLP Settings"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Read",
+          "Zero Trust Write"
+        ]
+      },
+      "put": {
+        "description": "Enables or disables payload logging for DLP matches. When enabled, matched content is stored for review.",
+        "operationId": "dlp-payload-log-put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dlp_PayloadLogSettingUpdateLegacy"
+              }
+            }
+          },
+          "description": "New payload log settings.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_PayloadLogSetting"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Payload log settings."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Failed to set payload log settings."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Set payload log settings",
+        "tags": [
+          "DLP Settings"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/dlp/profiles": {
+      "get": {
+        "description": "Lists all DLP profiles in an account.",
+        "operationId": "dlp-profiles-list-all-profiles",
+        "parameters": [
+          {
+            "description": "Return all profiles, including those that current account does not have access to.",
+            "in": "query",
+            "name": "all",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_ProfileArray"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "List all profiles response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "List all profiles failure response."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "List all profiles",
+        "tags": [
+          "DLP Profiles"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Read",
+          "Zero Trust Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/dlp/profiles/custom": {
+      "get": {
+        "description": "Lists all DLP custom profiles in an account.",
+        "operationId": "dlp-profiles-list-all-custom-profiles",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_CustomProfileArray"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "List all custom profiles response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "List all profiles failure response."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "List all custom profiles",
+        "tags": [
+          "DLP Profiles"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Read",
+          "Zero Trust Write"
+        ]
+      },
+      "post": {
+        "description": "Creates a DLP custom profile.",
+        "operationId": "dlp-profiles-create-custom-profiles",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dlp_NewCustomProfile"
+              }
+            }
+          },
+          "description": "A new profile to create.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_Profile"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "New custom profile response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "New custom profile failure response."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Create custom profile",
+        "tags": [
+          "DLP Profiles"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/dlp/profiles/custom/{profile_id}": {
+      "delete": {
+        "description": "Deletes a DLP custom profile.",
+        "operationId": "dlp-profiles-delete-custom-profile",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "profile_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_Empty"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Delete custom profile response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Delete custom profile failure response."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Delete custom profile",
+        "tags": [
+          "DLP Profiles"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      },
+      "get": {
+        "description": "Fetches a custom DLP profile by id.",
+        "operationId": "dlp-profiles-get-custom-profile",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "profile_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_Profile"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Custom profile response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Custom profile failure response."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Get custom profile",
+        "tags": [
+          "DLP Profiles"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Read",
+          "Zero Trust Write"
+        ]
+      },
+      "put": {
+        "description": "Updates a DLP custom profile.",
+        "operationId": "dlp-profiles-update-custom-profile",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "profile_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dlp_CustomProfileUpdate"
+              }
+            }
+          },
+          "description": "The updated parameters for the profile.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_Profile"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Update custom profile response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Update custom profile failure response."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Update custom profile",
+        "tags": [
+          "DLP Profiles"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/dlp/profiles/predefined": {
+      "post": {
+        "description": "Creates a DLP predefined profile. Only supports enabling/disabling entries.",
+        "operationId": "dlp-profiles-create-predefined-profile",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dlp_NewPredefinedProfile"
+              }
+            }
+          },
+          "description": "Predefined profiles can not be created. This endpoint will only update an existing predefined profiles settings.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_Profile"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Create predefined profile response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Create predefined profile failure response."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Create predefined profile",
+        "tags": [
+          "DLP Profiles"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/dlp/profiles/predefined/{profile_id}": {
+      "delete": {
+        "description": "This is a no-op as predefined profiles can't be deleted but is needed for our generated terraform API.",
+        "operationId": "dlp-profiles-delete-predefined-profile",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "profile_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_Empty"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Delete predefined profile response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Delete predefined profile failure response."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Delete predefined profile",
+        "tags": [
+          "DLP Profiles"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      },
+      "get": {
+        "description": "Fetches a predefined DLP profile by id.",
+        "operationId": "dlp-profiles-get-predefined-profile",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "profile_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_Profile"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Predefined profile response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Predefined profile failure response."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Get predefined profile",
+        "tags": [
+          "DLP Profiles"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Read",
+          "Zero Trust Write"
+        ]
+      },
+      "put": {
+        "description": "Updates a DLP predefined profile. Only supports enabling/disabling entries.",
+        "operationId": "dlp-profiles-update-predefined-profile",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "profile_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dlp_PredefinedProfileUpdate"
+              }
+            }
+          },
+          "description": "The updated parameters for the predefined profile.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_Profile"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Update predefined profile response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Update predefined profile failure response."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Update predefined profile",
+        "tags": [
+          "DLP Profiles"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/dlp/profiles/predefined/{profile_id}/config": {
+      "get": {
+        "description": "This is similar to `get_predefined` but only returns entries that are enabled.\nThis is needed for our terraform API\nFetches a predefined DLP profile by id.",
+        "operationId": "dlp-profiles-get-predefined-profile-config",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "profile_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_PredefinedProfileConfig"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Predefined profile response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Predefined profile failure response."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Get predefined profile config",
+        "tags": [
+          "DLP Profiles"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Read",
+          "Zero Trust Write"
+        ]
+      },
+      "post": {
+        "description": "This is similar to `update_predefined` but only returns entries that are enabled.\nThis is needed for our terraform API\nCreates a DLP predefined profile. Only supports enabling/disabling entries.",
+        "operationId": "dlp-profiles-create-predefined-profile-config",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "profile_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dlp_PredefinedProfileConfigUpdate"
+              }
+            }
+          },
+          "description": "Predefined profiles can not be created. This endpoint will only update an existing predefined profiles settings.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_PredefinedProfileConfig"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Create predefined profile response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Create predefined profile failure response."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Create predefined profile",
+        "tags": [
+          "DLP Profiles"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      },
+      "put": {
+        "description": "This is similar to `update_predefined` but only returns entries that are enabled.\nThis is needed for our terraform API\nUpdates a DLP predefined profile. Only supports enabling/disabling entries.",
+        "operationId": "dlp-profiles-update-predefined-profile-config",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "profile_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dlp_PredefinedProfileConfigUpdate"
+              }
+            }
+          },
+          "description": "The updated parameters for the predefined profile.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_PredefinedProfileConfig"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Update predefined profile response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Update predefined profile failure response."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Update predefined profile config",
+        "tags": [
+          "DLP Profiles"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/dlp/profiles/{profile_id}": {
+      "get": {
+        "description": "Fetches a DLP profile by ID.",
+        "operationId": "dlp-profiles-get-dlp-profile",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "profile_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_Profile"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Get profile response."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Get profile failure response."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Get DLP Profile",
+        "tags": [
+          "DLP Profiles"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Read",
+          "Zero Trust Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/dlp/settings": {
+      "delete": {
+        "operationId": "dlp-settings-delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_DlpSettings"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "DLP settings reset."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Failed to delete DLP settings."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Delete (reset) DLP account-level settings to initial values.",
+        "tags": [
+          "DLP Settings"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      },
+      "get": {
+        "operationId": "dlp-settings-get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_DlpSettings"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "DLP settings."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Failed to get DLP settings."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Get DLP account-level settings.",
+        "tags": [
+          "DLP Settings"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Read",
+          "Zero Trust Write"
+        ]
+      },
+      "patch": {
+        "description": "Missing fields keep their existing values.",
+        "operationId": "dlp-settings-edit",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dlp_DlpSettingsUpdate"
+              }
+            }
+          },
+          "description": "DLP settings fields to update.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_DlpSettings"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "DLP settings."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Failed to update DLP settings."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Partially update DLP account-level settings.",
+        "tags": [
+          "DLP Settings"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      },
+      "put": {
+        "description": "Missing fields are reset to initial (unconfigured) values.",
+        "operationId": "dlp-settings-update",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dlp_DlpSettingsUpdate"
+              }
+            }
+          },
+          "description": "New DLP settings.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dlp_api-response-single"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dlp_DlpSettings"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "DLP settings."
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dlp_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Failed to update DLP settings."
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": [],
+            "api_token": []
+          }
+        ],
+        "summary": "Update DLP account-level settings (full replacement).",
+        "tags": [
+          "DLP Settings"
+        ],
+        "x-api-token-group": [
+          "Zero Trust Write"
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "dlp_EntryWithUploadStatus": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/dlp_Entry"
+          },
+          {
+            "properties": {
+              "upload_status": {
+                "allOf": [
+                  {
+                    "enum": [
+                      "empty",
+                      "uploading",
+                      "pending",
+                      "processing",
+                      "failed",
+                      "complete"
+                    ],
+                    "type": "string"
+                  }
+                ],
+                "x-stainless-terraform-configurability": "computed_optional"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "dlp_DocumentFingerprintArray": {
+        "items": {
+          "$ref": "#/components/schemas/dlp_DocumentFingerprint"
+        },
+        "type": "array"
+      },
+      "dlp_NewPredefinedEntry": {
+        "description": "Used to create a new predefined or integration entry.\n\nPredefined or integration entries can not be updated via the API so\nthese fields will update the entry's settings.",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "entry_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "profile_id": {
+            "description": "This field is not used as the owning profile.\nFor predefined entries it is already set to a predefined profile.",
+            "format": "uuid",
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "enabled",
+          "entry_id"
+        ],
+        "type": "object"
+      },
+      "dlp_DatasetNewVersion": {
+        "properties": {
+          "case_sensitive": {
+            "type": "boolean"
+          },
+          "columns": {
+            "items": {
+              "$ref": "#/components/schemas/dlp_DatasetColumn"
+            },
+            "type": "array"
+          },
+          "encoding_version": {
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "max_cells": {
+            "format": "int64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "secret": {
+            "format": "password",
+            "type": "string"
+          },
+          "version": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "version",
+          "max_cells",
+          "encoding_version"
+        ],
+        "type": "object"
+      },
+      "dlp_CreateEmailRule": {
+        "properties": {
+          "action": {
+            "$ref": "#/components/schemas/dlp_EmailRuleAction"
+          },
+          "conditions": {
+            "description": "Triggered if all conditions match.",
+            "items": {
+              "$ref": "#/components/schemas/dlp_EmailRuleCondition"
+            },
+            "type": "array"
+          },
+          "description": {
+            "nullable": true,
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "enabled",
+          "conditions",
+          "action"
+        ],
+        "type": "object"
+      },
+      "dlp_IntegrationEntry": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "profile_id": {
+            "format": "uuid",
+            "nullable": true,
+            "type": "string",
+            "x-stainless-terraform-configurability": "computed_optional"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "created_at",
+          "updated_at",
+          "enabled"
+        ],
+        "type": "object"
+      },
+      "dlp_CustomProfileUpdate": {
+        "properties": {
+          "ai_context_enabled": {
+            "default": false,
+            "type": "boolean"
+          },
+          "allowed_match_count": {
+            "format": "int32",
+            "nullable": true,
+            "type": "integer"
+          },
+          "confidence_threshold": {
+            "default": "low",
+            "nullable": true,
+            "type": "string"
+          },
+          "context_awareness": {
+            "$ref": "#/components/schemas/dlp_ContextAwareness"
+          },
+          "data_classes": {
+            "description": "Data class IDs to associate with the profile. If omitted, existing associations are unchanged.",
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "data_tags": {
+            "description": "Data tag IDs to associate with the profile. If omitted, existing associations are unchanged.",
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "description": {
+            "description": "The description of the profile.",
+            "nullable": true,
+            "type": "string"
+          },
+          "entries": {
+            "deprecated": true,
+            "description": "Custom entries from this profile.\nIf this field is omitted, entries owned by this profile will not be changed.",
+            "items": {
+              "$ref": "#/components/schemas/dlp_ProfileEntryUpdate"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "name": {
+            "type": "string"
+          },
+          "ocr_enabled": {
+            "default": false,
+            "type": "boolean"
+          },
+          "sensitivity_levels": {
+            "description": "Sensitivity levels to associate with the profile. If omitted, existing associations are unchanged.",
+            "items": {
+              "$ref": "#/components/schemas/dlp_SensitivityLevelRef"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "shared_entries": {
+            "description": "Other entries, e.g. predefined or integration.",
+            "items": {
+              "$ref": "#/components/schemas/dlp_SharedEntryUpdate"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "dlp_Empty": {
+        "nullable": true,
+        "type": "object"
+      },
+      "dlp_Entry": {
+        "type": "object",
+        "description": "A DLP entry",
+        "additionalProperties": true,
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Entry type"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "dlp_Limits": {
+        "properties": {
+          "max_dataset_cells": {
+            "format": "int64",
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "max_dataset_cells"
+        ],
+        "type": "object"
+      },
+      "dlp_PredefinedProfileConfig": {
+        "properties": {
+          "ai_context_enabled": {
+            "default": false,
+            "type": "boolean"
+          },
+          "allowed_match_count": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "confidence_threshold": {
+            "default": "low",
+            "nullable": true,
+            "type": "string"
+          },
+          "enabled_entries": {
+            "description": "Entries to enable for this predefined profile. Any entries not provided will be disabled.",
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "entries": {
+            "deprecated": true,
+            "description": "This field has been deprecated for `enabled_entries`.",
+            "items": {
+              "$ref": "#/components/schemas/dlp_Entry"
+            },
+            "type": "array"
+          },
+          "id": {
+            "description": "The id of the predefined profile (uuid).",
+            "format": "uuid",
+            "type": "string"
+          },
+          "name": {
+            "description": "The name of the predefined profile.",
+            "type": "string"
+          },
+          "ocr_enabled": {
+            "default": false,
+            "type": "boolean"
+          },
+          "open_access": {
+            "description": "Whether this profile can be accessed by anyone.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "entries",
+          "enabled_entries",
+          "allowed_match_count",
+          "confidence_threshold"
+        ],
+        "type": "object"
+      },
+      "dlp_RegexValidationQuery": {
+        "properties": {
+          "max_match_bytes": {
+            "description": "Maximum number of bytes that the regular expression can match.\n\nIf this is `null` then there is no limit on the length. Patterns can use\n`*` and `+`. Otherwise repeats should use a range `{m,n}` to restrict\npatterns to the length. If this field is missing, then a default length\nlimit is used.\n\nNote that the length is specified in bytes. Since regular expressions\nuse UTF-8 the pattern `.` can match up to 4 bytes. Hence `.{1,256}`\nhas a maximum length of 1024 bytes.",
+            "format": "int32",
+            "minimum": 0,
+            "nullable": true,
+            "type": "integer"
+          },
+          "regex": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "regex"
+        ],
+        "type": "object"
+      },
+      "dlp_Profile": {
+        "oneOf": [
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/dlp_CustomProfile"
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "custom"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "title": "Custom Profile"
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/dlp_PredefinedProfile"
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "predefined"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "title": "Predefined Profile"
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/dlp_IntegrationProfile"
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "integration"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "title": "Integration Profile"
+          }
+        ]
+      },
+      "dlp_ProfileEntryUpdate": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "nullable": true,
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "name": {
+            "type": "string"
+          },
+          "pattern": {
+            "$ref": "#/components/schemas/dlp_Pattern"
+          },
+          "entry_id": {
+            "format": "uuid",
+            "type": "string"
+          }
+        }
+      },
+      "dlp_RegexValidationResult": {
+        "properties": {
+          "valid": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "valid"
+        ],
+        "type": "object"
+      },
+      "dlp_EmailRuleCondition": {
+        "properties": {
+          "operator": {
+            "enum": [
+              "InList",
+              "NotInList",
+              "MatchRegex",
+              "NotMatchRegex"
+            ],
+            "type": "string"
+          },
+          "selector": {
+            "enum": [
+              "Recipients",
+              "Sender",
+              "DLPProfiles"
+            ],
+            "type": "string"
+          },
+          "value": {
+            "$ref": "#/components/schemas/dlp_EmailRuleValue"
+          }
+        },
+        "required": [
+          "selector",
+          "operator",
+          "value"
+        ],
+        "type": "object"
+      },
+      "dlp_NewPredefinedProfile": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/dlp_PredefinedProfileUpdate"
+          },
+          {
+            "properties": {
+              "profile_id": {
+                "format": "uuid",
+                "type": "string"
+              }
+            },
+            "required": [
+              "profile_id"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "dlp_ProfileArray": {
+        "items": {
+          "$ref": "#/components/schemas/dlp_Profile"
+        },
+        "type": "array"
+      },
+      "dlp_PredefinedProfileConfigUpdate": {
+        "properties": {
+          "ai_context_enabled": {
+            "default": false,
+            "type": "boolean"
+          },
+          "allowed_match_count": {
+            "default": 0,
+            "example": 5,
+            "format": "int32",
+            "maximum": 1000,
+            "minimum": 0,
+            "nullable": true,
+            "type": "integer"
+          },
+          "confidence_threshold": {
+            "default": "low",
+            "nullable": true,
+            "type": "string"
+          },
+          "enabled_entries": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "entries": {
+            "deprecated": true,
+            "items": {
+              "$ref": "#/components/schemas/dlp_PredefinedProfileEntryUpdate"
+            },
+            "type": "array",
+            "x-stainless-terraform-configurability": "computed_optional"
+          },
+          "ocr_enabled": {
+            "default": false,
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "dlp_EmailRule": {
+        "properties": {
+          "action": {
+            "$ref": "#/components/schemas/dlp_EmailRuleAction"
+          },
+          "conditions": {
+            "description": "Triggered if all conditions match.",
+            "items": {
+              "$ref": "#/components/schemas/dlp_EmailRuleCondition"
+            },
+            "type": "array"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "description": {
+            "nullable": true,
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "name": {
+            "type": "string"
+          },
+          "priority": {
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "rule_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "rule_id",
+          "name",
+          "priority",
+          "enabled",
+          "conditions",
+          "action",
+          "created_at",
+          "updated_at"
+        ],
+        "type": "object"
+      },
+      "dlp_DatasetColumn": {
+        "properties": {
+          "entry_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "header_name": {
+            "type": "string"
+          },
+          "num_cells": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "upload_status": {
+            "enum": [
+              "empty",
+              "uploading",
+              "pending",
+              "processing",
+              "failed",
+              "complete"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "entry_id",
+          "upload_status",
+          "header_name",
+          "num_cells"
+        ],
+        "type": "object"
+      },
+      "dlp_UpdateEmailRulePriorities": {
+        "description": "Used to update multiple email rule priorities as an atomic action,\nto support patterns such as swapping the priorities of two email rules.",
+        "properties": {
+          "new_priorities": {
+            "additionalProperties": {
+              "format": "int32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "type": "object"
+          }
+        },
+        "required": [
+          "new_priorities"
+        ],
+        "type": "object"
+      },
+      "dlp_DatasetCreation": {
+        "properties": {
+          "dataset": {
+            "$ref": "#/components/schemas/dlp_Dataset"
+          },
+          "encoding_version": {
+            "description": "Encoding version to use for dataset.",
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "max_cells": {
+            "format": "int64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "secret": {
+            "description": "The secret to use for Exact Data Match datasets.\n\nThis is not present in Custom Wordlists.",
+            "format": "password",
+            "type": "string"
+          },
+          "version": {
+            "description": "The version to use when uploading the dataset.",
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "version",
+          "max_cells",
+          "dataset",
+          "encoding_version"
+        ],
+        "type": "object"
+      },
+      "dlp_DatasetColumnArray": {
+        "items": {
+          "$ref": "#/components/schemas/dlp_DatasetColumn"
+        },
+        "type": "array"
+      },
+      "dlp_DlpSettings": {
+        "description": "DLP account-level settings response.",
+        "properties": {
+          "ai_context_analysis": {
+            "description": "Whether AI context analysis is enabled at the account level.",
+            "type": "boolean"
+          },
+          "ocr": {
+            "description": "Whether OCR is enabled at the account level.",
+            "type": "boolean"
+          },
+          "payload_logging": {
+            "$ref": "#/components/schemas/dlp_PayloadLogSetting"
+          }
+        },
+        "required": [
+          "payload_logging",
+          "ai_context_analysis",
+          "ocr"
+        ],
+        "type": "object"
+      },
+      "dlp_EmailRuleAction": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "enum": [
+              "Block"
+            ],
+            "type": "string"
+          },
+          "message": {
+            "nullable": true,
+            "type": "string"
+          }
+        }
+      },
+      "dlp_CustomEntryUpdate": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/dlp_CustomEntryUpdateType"
+          },
+          {
+            "properties": {
+              "enabled": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "enabled"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "dlp_EntryUpdate": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/dlp_EntryUpdateType"
+          },
+          {
+            "properties": {
+              "enabled": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "enabled"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "dlp_UpdateDocumentFingerprint": {
+        "properties": {
+          "description": {
+            "nullable": true,
+            "type": "string"
+          },
+          "match_percent": {
+            "format": "int32",
+            "nullable": true,
+            "type": "integer"
+          },
+          "name": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "dlp_CustomProfile": {
+        "properties": {
+          "ai_context_enabled": {
+            "default": false,
+            "type": "boolean"
+          },
+          "allowed_match_count": {
+            "default": 0,
+            "description": "Related DLP policies will trigger when the match count exceeds the number set.",
+            "example": 5,
+            "format": "int32",
+            "maximum": 1000,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "confidence_threshold": {
+            "allOf": [
+              {
+                "enum": [
+                  "low",
+                  "medium",
+                  "high",
+                  "very_high"
+                ],
+                "type": "string"
+              }
+            ],
+            "default": "low"
+          },
+          "context_awareness": {
+            "$ref": "#/components/schemas/dlp_ContextAwareness"
+          },
+          "created_at": {
+            "description": "When the profile was created.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "data_classes": {
+            "description": "Data classes associated with this profile.",
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "data_tags": {
+            "description": "Data tags associated with this profile.",
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "description": {
+            "description": "The description of the profile.",
+            "nullable": true,
+            "type": "string"
+          },
+          "entries": {
+            "deprecated": true,
+            "items": {
+              "$ref": "#/components/schemas/dlp_Entry"
+            },
+            "type": "array",
+            "x-stainless-skip": [
+              "terraform"
+            ]
+          },
+          "id": {
+            "description": "The id of the profile (uuid).",
+            "format": "uuid",
+            "type": "string"
+          },
+          "name": {
+            "description": "The name of the profile.",
+            "type": "string",
+            "x-auditable": true
+          },
+          "ocr_enabled": {
+            "default": false,
+            "type": "boolean"
+          },
+          "sensitivity_levels": {
+            "description": "Sensitivity levels associated with this profile.",
+            "items": {
+              "$ref": "#/components/schemas/dlp_SensitivityLevelRef"
+            },
+            "type": "array"
+          },
+          "shared_entries": {
+            "items": {
+              "$ref": "#/components/schemas/dlp_Entry"
+            },
+            "type": "array",
+            "x-stainless-terraform-configurability": "computed"
+          },
+          "updated_at": {
+            "description": "When the profile was lasted updated.",
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "created_at",
+          "updated_at",
+          "allowed_match_count",
+          "ocr_enabled"
+        ],
+        "type": "object"
+      },
+      "dlp_EntryWithSharedProfiles": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/dlp_EntryWithUploadStatus"
+          },
+          {
+            "properties": {
+              "profiles": {
+                "items": {
+                  "$ref": "#/components/schemas/dlp_EntryProfile"
+                },
+                "type": "array",
+                "x-stainless-terraform-configurability": "computed_optional"
+              }
+            },
+            "required": [
+              "profiles"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "dlp_IntegrationProfile": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "description": {
+            "description": "The description of the profile.",
+            "nullable": true,
+            "type": "string"
+          },
+          "entries": {
+            "deprecated": true,
+            "items": {
+              "$ref": "#/components/schemas/dlp_Entry"
+            },
+            "type": "array"
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "shared_entries": {
+            "items": {
+              "$ref": "#/components/schemas/dlp_Entry"
+            },
+            "type": "array",
+            "x-stainless-terraform-configurability": "computed"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "entries",
+          "shared_entries",
+          "created_at",
+          "updated_at"
+        ],
+        "type": "object"
+      },
+      "dlp_DocumentFingerprintUpload": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "entry_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "file_name": {
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "match_percent": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "empty",
+              "uploading",
+              "pending",
+              "processing",
+              "failed",
+              "complete"
+            ],
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "version": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "entry_id",
+          "name",
+          "description",
+          "match_percent",
+          "version",
+          "file_name",
+          "status",
+          "created_at",
+          "updated_at"
+        ],
+        "type": "object"
+      },
+      "dlp_PayloadLogSetting": {
+        "properties": {
+          "masking_level": {
+            "allOf": [
+              {
+                "description": "Masking level for payload logs.\n\n- `full`: The entire payload is masked.\n- `partial`: Only partial payload content is masked.\n- `clear`: No masking is applied to the payload content.\n- `default`: DLP uses its default masking behavior.",
+                "enum": [
+                  "full",
+                  "partial",
+                  "clear",
+                  "default"
+                ],
+                "type": "string"
+              }
+            ]
+          },
+          "public_key": {
+            "description": "Base64-encoded public key for encrypting payload logs. Null when payload logging is disabled.",
+            "nullable": true,
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "updated_at"
+        ],
+        "type": "object"
+      },
+      "dlp_CustomEntryUpdateType": {
+        "properties": {
+          "description": {
+            "nullable": true,
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "pattern": {
+            "$ref": "#/components/schemas/dlp_Pattern"
+          }
+        },
+        "required": [
+          "name",
+          "pattern"
+        ],
+        "type": "object"
+      },
+      "dlp_ContextAwareness": {
+        "deprecated": true,
+        "description": "Scan the context of predefined entries to only return matches surrounded by keywords.",
+        "properties": {
+          "enabled": {
+            "description": "If true, scan the context of predefined entries to only return matches surrounded by keywords.",
+            "type": "boolean"
+          },
+          "skip": {
+            "$ref": "#/components/schemas/dlp_SkipConfig"
+          }
+        },
+        "required": [
+          "enabled",
+          "skip"
+        ],
+        "type": "object"
+      },
+      "dlp_PredefinedEntry": {
+        "properties": {
+          "confidence": {
+            "$ref": "#/components/schemas/dlp_EntryConfidence"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "profile_id": {
+            "deprecated": true,
+            "format": "uuid",
+            "nullable": true,
+            "type": "string"
+          },
+          "variant": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/dlp_PredefinedEntryVariant"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "enabled",
+          "confidence"
+        ],
+        "type": "object"
+      },
+      "dlp_AddinAccountMapping": {
+        "properties": {
+          "addin_identifier_token": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "auth_requirements": {
+            "$ref": "#/components/schemas/dlp_AddinAuth"
+          }
+        },
+        "required": [
+          "auth_requirements",
+          "addin_identifier_token"
+        ],
+        "type": "object"
+      },
+      "dlp_EmailRuleValue": {
+        "oneOf": [
+          {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          {
+            "type": "string"
+          }
+        ]
+      },
+      "dlp_PayloadLogSettingUpdateLegacy": {
+        "description": "Request model for the legacy payload log settings endpoint.",
+        "properties": {
+          "masking_level": {
+            "allOf": [
+              {
+                "description": "Masking level for payload logs.\n\n- `full`: The entire payload is masked.\n- `partial`: Only partial payload content is masked.\n- `clear`: No masking is applied to the payload content.\n- `default`: DLP uses its default masking behavior.",
+                "enum": [
+                  "full",
+                  "partial",
+                  "clear",
+                  "default"
+                ],
+                "type": "string"
+              }
+            ]
+          },
+          "public_key": {
+            "description": "Base64-encoded public key for encrypting payload logs.\n\n- Set to null or empty string to disable payload logging.\n- Set to a non-empty base64 string to enable payload logging with the given key.\n\nFor customers with configurable payload masking feature rolled out:\n- If the field is missing, the existing setting will be kept. Note that this is different from setting to null or empty string.\n\nFor all other customers:\n- If the field is missing, the existing setting will be cleared.",
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "dlp_SkipConfig": {
+        "description": "Content types to exclude from context analysis and return all matches.",
+        "properties": {
+          "files": {
+            "description": "If the content type is a file, skip context analysis and return all matches.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "files"
+        ],
+        "type": "object"
+      },
+      "dlp_EmailRuleArray": {
+        "items": {
+          "$ref": "#/components/schemas/dlp_EmailRule"
+        },
+        "type": "array"
+      },
+      "dlp_UpdateAddinAccountMapping": {
+        "properties": {
+          "auth_requirements": {
+            "$ref": "#/components/schemas/dlp_AddinAuth"
+          }
+        },
+        "required": [
+          "auth_requirements"
+        ],
+        "type": "object"
+      },
+      "dlp_PredefinedEntryVariant": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "nullable": true,
+            "type": "string"
+          },
+          "topic_type": {
+            "enum": [
+              "Intent",
+              "Content"
+            ],
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "PromptTopic"
+            ],
+            "type": "string"
+          }
+        }
+      },
+      "dlp_CustomProfileArray": {
+        "items": {
+          "$ref": "#/components/schemas/dlp_CustomProfile"
+        },
+        "type": "array"
+      },
+      "dlp_PredefinedEntryUpdate": {
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "enabled"
+        ],
+        "type": "object"
+      },
+      "dlp_DlpSettingsUpdate": {
+        "description": "Request model for updating DLP account-level settings.\nAll fields are optional. Missing fields behave differently for PUT vs PATCH:\n- PUT: missing fields reset to initial (unconfigured) values.\n- PATCH: missing fields keep existing values.",
+        "properties": {
+          "ai_context_analysis": {
+            "default": false,
+            "description": "Whether AI context analysis is enabled at the account level.",
+            "nullable": true,
+            "type": "boolean",
+            "x-stainless-terraform-configurability": "computed_optional"
+          },
+          "ocr": {
+            "default": false,
+            "description": "Whether OCR is enabled at the account level.",
+            "nullable": true,
+            "type": "boolean",
+            "x-stainless-terraform-configurability": "computed_optional"
+          },
+          "payload_logging": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/dlp_PayloadLogSettingUpdate"
+              }
+            ],
+            "x-stainless-terraform-configurability": "computed_optional"
+          }
+        },
+        "type": "object"
+      },
+      "dlp_PredefinedProfileUpdate": {
+        "properties": {
+          "ai_context_enabled": {
+            "default": false,
+            "type": "boolean"
+          },
+          "allowed_match_count": {
+            "default": 0,
+            "example": 5,
+            "format": "int32",
+            "maximum": 1000,
+            "minimum": 0,
+            "nullable": true,
+            "type": "integer"
+          },
+          "confidence_threshold": {
+            "default": "low",
+            "nullable": true,
+            "type": "string"
+          },
+          "context_awareness": {
+            "$ref": "#/components/schemas/dlp_ContextAwareness"
+          },
+          "entries": {
+            "deprecated": true,
+            "items": {
+              "$ref": "#/components/schemas/dlp_PredefinedProfileEntryUpdate"
+            },
+            "type": "array"
+          },
+          "ocr_enabled": {
+            "default": false,
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "dlp_Pattern": {
+        "properties": {
+          "regex": {
+            "type": "string"
+          },
+          "validation": {
+            "allOf": [
+              {
+                "deprecated": true,
+                "enum": [
+                  "luhn"
+                ],
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "required": [
+          "regex"
+        ],
+        "type": "object"
+      },
+      "dlp_api-response-common-failure": {
+        "properties": {
+          "errors": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/dlp_messages"
+              }
+            ],
+            "example": [
+              {
+                "code": 7003,
+                "message": "No route for the URI"
+              }
+            ],
+            "minLength": 1
+          },
+          "messages": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/dlp_messages"
+              }
+            ],
+            "example": []
+          },
+          "result": {
+            "enum": [
+              null
+            ],
+            "nullable": true,
+            "type": "object"
+          },
+          "success": {
+            "description": "Whether the API call was successful.",
+            "enum": [
+              false
+            ],
+            "example": false,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success",
+          "errors",
+          "messages",
+          "result"
+        ],
+        "type": "object"
+      },
+      "dlp_NewCustomProfile": {
+        "properties": {
+          "ai_context_enabled": {
+            "default": false,
+            "type": "boolean"
+          },
+          "allowed_match_count": {
+            "default": 0,
+            "description": "Related DLP policies will trigger when the match count exceeds the number set.",
+            "example": 5,
+            "format": "int32",
+            "maximum": 1000,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "confidence_threshold": {
+            "default": "low",
+            "nullable": true,
+            "type": "string"
+          },
+          "context_awareness": {
+            "$ref": "#/components/schemas/dlp_ContextAwareness"
+          },
+          "data_classes": {
+            "description": "Data class IDs to associate with the profile.",
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "data_tags": {
+            "description": "Data tag IDs to associate with the profile.",
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "description": {
+            "description": "The description of the profile.",
+            "nullable": true,
+            "type": "string"
+          },
+          "entries": {
+            "items": {
+              "$ref": "#/components/schemas/dlp_EntryOfNewProfile"
+            },
+            "type": "array",
+            "x-stainless-skip": [
+              "terraform"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "ocr_enabled": {
+            "default": false,
+            "type": "boolean"
+          },
+          "sensitivity_levels": {
+            "description": "Sensitivity levels to associate with the profile.",
+            "items": {
+              "$ref": "#/components/schemas/dlp_SensitivityLevelRef"
+            },
+            "type": "array"
+          },
+          "shared_entries": {
+            "description": "Entries from other profiles (e.g. pre-defined Cloudflare profiles, or your Microsoft Information Protection profiles).",
+            "items": {
+              "$ref": "#/components/schemas/dlp_NewSharedEntry"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "dlp_DatasetArray": {
+        "items": {
+          "$ref": "#/components/schemas/dlp_Dataset"
+        },
+        "type": "array"
+      },
+      "dlp_Dataset": {
+        "properties": {
+          "case_sensitive": {
+            "type": "boolean"
+          },
+          "columns": {
+            "items": {
+              "$ref": "#/components/schemas/dlp_DatasetColumn"
+            },
+            "type": "array"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "description": {
+            "description": "The description of the dataset.",
+            "nullable": true,
+            "type": "string"
+          },
+          "encoding_version": {
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "num_cells": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "secret": {
+            "type": "boolean"
+          },
+          "status": {
+            "enum": [
+              "empty",
+              "uploading",
+              "pending",
+              "processing",
+              "failed",
+              "complete"
+            ],
+            "type": "string"
+          },
+          "updated_at": {
+            "description": "Stores when the dataset was last updated.\n\nThis includes name or description changes as well as uploads.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "uploads": {
+            "items": {
+              "$ref": "#/components/schemas/dlp_DatasetUpload"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "id",
+          "status",
+          "num_cells",
+          "created_at",
+          "updated_at",
+          "uploads",
+          "secret",
+          "encoding_version",
+          "columns"
+        ],
+        "type": "object"
+      },
+      "dlp_DocumentFingerprint": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "description": {
+            "default": "",
+            "type": "string"
+          },
+          "entry_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "file_name": {
+            "nullable": true,
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "match_percent": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "empty",
+              "uploading",
+              "pending",
+              "processing",
+              "failed",
+              "complete"
+            ],
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "version": {
+            "format": "int64",
+            "nullable": true,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "entry_id",
+          "name",
+          "description",
+          "match_percent",
+          "status",
+          "created_at",
+          "updated_at"
+        ],
+        "type": "object"
+      },
+      "dlp_CustomEntry": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "description": {
+            "nullable": true,
+            "type": "string"
+          },
+          "enabled": {
+            "deprecated": true,
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "pattern": {
+            "$ref": "#/components/schemas/dlp_Pattern"
+          },
+          "profile_id": {
+            "deprecated": true,
+            "format": "uuid",
+            "nullable": true,
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "created_at",
+          "updated_at",
+          "pattern",
+          "enabled"
+        ],
+        "type": "object"
+      },
+      "dlp_NewEntry": {
+        "properties": {
+          "description": {
+            "nullable": true,
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "name": {
+            "type": "string"
+          },
+          "pattern": {
+            "$ref": "#/components/schemas/dlp_Pattern"
+          },
+          "profile_id": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "pattern",
+          "enabled"
+        ],
+        "type": "object"
+      },
+      "dlp_api-response-single": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/dlp_api-response-common"
+          }
+        ],
+        "type": "object"
+      },
+      "dlp_EntryUpdateType": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "enum": [
+              "integration"
+            ],
+            "type": "string"
+          }
+        }
+      },
+      "dlp_SensitivityLevelRef": {
+        "description": "A reference pairing a sensitivity group with a specific level within that group.",
+        "properties": {
+          "group_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "level_id": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "group_id",
+          "level_id"
+        ],
+        "type": "object"
+      },
+      "dlp_SharedEntryUpdate": {
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "entry_id": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "entry_id",
+          "enabled"
+        ],
+        "type": "object"
+      },
+      "dlp_EntryConfidence": {
+        "properties": {
+          "ai_context_available": {
+            "description": "Indicates whether this entry has AI remote service validation.",
+            "type": "boolean"
+          },
+          "available": {
+            "description": "Indicates whether this entry has any form of validation that is not an AI remote service.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "available",
+          "ai_context_available"
+        ],
+        "type": "object"
+      },
+      "dlp_PredefinedProfileEntryUpdate": {
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "enabled"
+        ],
+        "type": "object"
+      },
+      "dlp_PredefinedProfile": {
+        "properties": {
+          "ai_context_enabled": {
+            "default": false,
+            "type": "boolean"
+          },
+          "allowed_match_count": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "confidence_threshold": {
+            "allOf": [
+              {
+                "enum": [
+                  "low",
+                  "medium",
+                  "high",
+                  "very_high"
+                ],
+                "type": "string"
+              }
+            ],
+            "default": "low"
+          },
+          "context_awareness": {
+            "$ref": "#/components/schemas/dlp_ContextAwareness"
+          },
+          "entries": {
+            "deprecated": true,
+            "items": {
+              "$ref": "#/components/schemas/dlp_Entry"
+            },
+            "type": "array"
+          },
+          "id": {
+            "description": "The id of the predefined profile (uuid).",
+            "format": "uuid",
+            "type": "string"
+          },
+          "name": {
+            "description": "The name of the predefined profile.",
+            "type": "string"
+          },
+          "ocr_enabled": {
+            "default": false,
+            "type": "boolean"
+          },
+          "open_access": {
+            "description": "Whether this profile can be accessed by anyone.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "entries",
+          "allowed_match_count"
+        ],
+        "type": "object"
+      },
+      "dlp_api-response-common": {
+        "properties": {
+          "errors": {
+            "$ref": "#/components/schemas/dlp_messages"
+          },
+          "messages": {
+            "$ref": "#/components/schemas/dlp_messages"
+          },
+          "success": {
+            "description": "Whether the API call was successful.",
+            "enum": [
+              true
+            ],
+            "example": true,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success",
+          "errors",
+          "messages"
+        ],
+        "type": "object"
+      },
+      "dlp_EntryOfNewProfile": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "nullable": true,
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "name": {
+            "type": "string"
+          },
+          "pattern": {
+            "$ref": "#/components/schemas/dlp_Pattern"
+          },
+          "words": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        }
+      },
+      "dlp_EntryProfile": {
+        "description": "Computed entry field for a profile that an entry is shared into.",
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object"
+      },
+      "dlp_NewSharedEntry": {
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "entry_id": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "entry_id",
+          "enabled"
+        ],
+        "type": "object"
+      },
+      "dlp_AddinAuth": {
+        "type": "object",
+        "properties": {
+          "allowed_microsoft_organizations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "type": {
+            "enum": [
+              "NoAuth"
+            ],
+            "type": "string"
+          }
+        }
+      },
+      "dlp_messages": {
+        "example": [],
+        "items": {
+          "properties": {
+            "code": {
+              "minimum": 1000,
+              "type": "integer"
+            },
+            "documentation_url": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "source": {
+              "properties": {
+                "pointer": {
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ],
+          "type": "object",
+          "uniqueItems": true
+        },
+        "type": "array"
+      },
+      "dlp_PayloadLogSettingUpdate": {
+        "description": "Request model for payload log settings within the DLP settings endpoint.\nUnlike the legacy endpoint, null and missing are treated identically here\n(both mean \"not provided\" for PATCH, \"reset to default\" for PUT).",
+        "properties": {
+          "masking_level": {
+            "allOf": [
+              {
+                "description": "Masking level for payload logs.\n\n- `full`: The entire payload is masked.\n- `partial`: Only partial payload content is masked.\n- `clear`: No masking is applied to the payload content.\n- `default`: DLP uses its default masking behavior.",
+                "enum": [
+                  "full",
+                  "partial",
+                  "clear",
+                  "default"
+                ],
+                "type": "string"
+              }
+            ],
+            "default": "default"
+          },
+          "public_key": {
+            "description": "Base64-encoded public key for encrypting payload logs.\n\n- Set to a non-empty base64 string to enable payload logging with the given key.\n- Set to an empty string to disable payload logging.\n- Omit or set to null to leave unchanged (PATCH) or reset to disabled (PUT).",
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "dlp_DatasetUpload": {
+        "properties": {
+          "num_cells": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "status": {
+            "enum": [
+              "empty",
+              "uploading",
+              "pending",
+              "processing",
+              "failed",
+              "complete"
+            ],
+            "type": "string"
+          },
+          "version": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "version",
+          "status",
+          "num_cells"
+        ],
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "api_email": {
+        "in": "header",
+        "name": "X-Auth-Email",
+        "type": "apiKey"
+      },
+      "api_key": {
+        "in": "header",
+        "name": "X-Auth-Key",
+        "type": "apiKey"
+      },
+      "api_token": {
+        "scheme": "bearer",
+        "type": "http"
+      },
+      "user_service_key": {
+        "in": "header",
+        "name": "X-Auth-User-Service-Key",
+        "type": "apiKey"
+      }
+    }
+  }
+}

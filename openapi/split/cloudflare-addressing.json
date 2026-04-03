@@ -1,0 +1,4549 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Cloudflare API - Addressing",
+    "version": "4.0.0"
+  },
+  "servers": [
+    {
+      "description": "Client API",
+      "url": "https://api.cloudflare.com/client/v4"
+    }
+  ],
+  "security": [
+    {
+      "api_email": [],
+      "api_key": []
+    },
+    {
+      "api_token": []
+    },
+    {
+      "user_service_key": []
+    }
+  ],
+  "paths": {
+    "/accounts/{account_id}/addressing/address_maps": {
+      "get": {
+        "description": "List all address maps owned by the account.",
+        "operationId": "ip-address-management-address-maps-list-address-maps",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Cloudflare account.",
+              "example": "258def64c72dae45f3e4c8516e2111f2",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addressing_components-schemas-response_collection"
+                }
+              }
+            },
+            "description": "List Address Maps response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/addressing_components-schemas-response_collection"
+                    },
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "List Address Maps response failure"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "summary": "List Address Maps",
+        "tags": [
+          "IP Address Management Address Maps"
+        ],
+        "x-api-token-group": [
+          "Address Maps Write",
+          "Address Maps Read"
+        ]
+      },
+      "post": {
+        "description": "Create a new address map under the account.",
+        "operationId": "ip-address-management-address-maps-create-address-map",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Cloudflare account.",
+              "example": "258def64c72dae45f3e4c8516e2111f2",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "description": {
+                    "description": "An optional description field which may be used to describe the types of IPs or zones on the map.",
+                    "example": "My Ecommerce zones",
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "enabled": {
+                    "default": false,
+                    "description": "Whether the Address Map is enabled or not. Cloudflare's DNS will not respond with IP addresses on an Address Map until the map is enabled.",
+                    "example": true,
+                    "nullable": true,
+                    "type": "boolean"
+                  },
+                  "ips": {
+                    "example": [
+                      "192.0.2.1"
+                    ],
+                    "items": {
+                      "description": "An IPv4 or IPv6 address.",
+                      "example": "192.0.2.1",
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "memberships": {
+                    "$ref": "#/components/schemas/addressing_membership_requests"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addressing_full_response"
+                }
+              }
+            },
+            "description": "Create Address Map response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/addressing_full_response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Create Address Map response failure"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "summary": "Create Address Map",
+        "tags": [
+          "IP Address Management Address Maps"
+        ],
+        "x-api-token-group": [
+          "Address Maps Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/addressing/address_maps/{address_map_id}": {
+      "delete": {
+        "description": "Delete a particular address map owned by the account. An Address Map must be disabled before it can be deleted.",
+        "operationId": "ip-address-management-address-maps-delete-address-map",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "address_map_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of an Address Map.",
+              "example": "055817b111884e0227e1be16a0be6ee0",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Cloudflare account.",
+              "example": "258def64c72dae45f3e4c8516e2111f2",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {}
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addressing_api-response-collection"
+                }
+              }
+            },
+            "description": "Delete Address Map response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-collection"
+                    },
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Delete Address Map response failure"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "summary": "Delete Address Map",
+        "tags": [
+          "IP Address Management Address Maps"
+        ],
+        "x-api-token-group": [
+          "Address Maps Write"
+        ]
+      },
+      "get": {
+        "description": "Show a particular address map owned by the account.",
+        "operationId": "ip-address-management-address-maps-address-map-details",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "address_map_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of an Address Map.",
+              "example": "055817b111884e0227e1be16a0be6ee0",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Cloudflare account.",
+              "example": "258def64c72dae45f3e4c8516e2111f2",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addressing_full_response"
+                }
+              }
+            },
+            "description": "Address Map Details response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/addressing_full_response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Address Map Details response failure"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "summary": "Address Map Details",
+        "tags": [
+          "IP Address Management Address Maps"
+        ],
+        "x-api-token-group": [
+          "Address Maps Write",
+          "Address Maps Read"
+        ]
+      },
+      "patch": {
+        "description": "Modify properties of an address map owned by the account.",
+        "operationId": "ip-address-management-address-maps-update-address-map",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "address_map_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of an Address Map.",
+              "example": "055817b111884e0227e1be16a0be6ee0",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Cloudflare account.",
+              "example": "258def64c72dae45f3e4c8516e2111f2",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "default_sni": {
+                    "description": "If you have legacy TLS clients which do not send the TLS server name indicator, then you can specify one default SNI on the map. If Cloudflare receives a TLS handshake from a client without an SNI, it will respond with the default SNI on those IPs. The default SNI can be any valid zone or subdomain owned by the account.",
+                    "example": "*.example.com",
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "description": {
+                    "description": "An optional description field which may be used to describe the types of IPs or zones on the map.",
+                    "example": "My Ecommerce zones",
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "enabled": {
+                    "default": false,
+                    "description": "Whether the Address Map is enabled or not. Cloudflare's DNS will not respond with IP addresses on an Address Map until the map is enabled.",
+                    "example": true,
+                    "nullable": true,
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addressing_components-schemas-single_response"
+                }
+              }
+            },
+            "description": "Update Address Map response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/addressing_components-schemas-single_response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Update Address Map response failure"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "summary": "Update Address Map",
+        "tags": [
+          "IP Address Management Address Maps"
+        ],
+        "x-api-token-group": [
+          "Address Maps Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/addressing/address_maps/{address_map_id}/accounts/{account_id}": {
+      "delete": {
+        "description": "Remove an account as a member of a particular address map.",
+        "operationId": "ip-address-management-address-maps-remove-an-account-membership-from-an-address-map",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Cloudflare account.",
+              "example": "258def64c72dae45f3e4c8516e2111f2",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "address_map_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of an Address Map.",
+              "example": "055817b111884e0227e1be16a0be6ee0",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {}
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addressing_api-response-collection"
+                }
+              }
+            },
+            "description": "Remove an account membership from an Address Map response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-collection"
+                    },
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Remove an account membership from an Address Map response failure"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "summary": "Remove an account membership from an Address Map",
+        "tags": [
+          "IP Address Management Address Maps"
+        ],
+        "x-api-token-group": [
+          "Address Maps Write"
+        ]
+      },
+      "put": {
+        "description": "Add an account as a member of a particular address map.",
+        "operationId": "ip-address-management-address-maps-add-an-account-membership-to-an-address-map",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Cloudflare account.",
+              "example": "258def64c72dae45f3e4c8516e2111f2",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "address_map_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of an Address Map.",
+              "example": "055817b111884e0227e1be16a0be6ee0",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {}
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addressing_api-response-collection"
+                }
+              }
+            },
+            "description": "Add an account membership to an Address Map response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-collection"
+                    },
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Add an account membership to an Address Map response failure"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "summary": "Add an account membership to an Address Map",
+        "tags": [
+          "IP Address Management Address Maps"
+        ]
+      }
+    },
+    "/accounts/{account_id}/addressing/address_maps/{address_map_id}/ips/{ip_address}": {
+      "delete": {
+        "description": "Remove an IP from a particular address map.",
+        "operationId": "ip-address-management-address-maps-remove-an-ip-from-an-address-map",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ip_address",
+            "required": true,
+            "schema": {
+              "description": "An IPv4 or IPv6 address.",
+              "example": "192.0.2.1",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "address_map_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of an Address Map.",
+              "example": "055817b111884e0227e1be16a0be6ee0",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Cloudflare account.",
+              "example": "258def64c72dae45f3e4c8516e2111f2",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {}
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addressing_api-response-collection"
+                }
+              }
+            },
+            "description": "Remove an IP from an Address Map response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-collection"
+                    },
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Remove an IP from an Address Map response failure"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "summary": "Remove an IP from an Address Map",
+        "tags": [
+          "IP Address Management Address Maps"
+        ],
+        "x-api-token-group": [
+          "Address Maps Write"
+        ]
+      },
+      "put": {
+        "description": "Add an IP from a prefix owned by the account to a particular address map.",
+        "operationId": "ip-address-management-address-maps-add-an-ip-to-an-address-map",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ip_address",
+            "required": true,
+            "schema": {
+              "description": "An IPv4 or IPv6 address.",
+              "example": "192.0.2.1",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "address_map_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of an Address Map.",
+              "example": "055817b111884e0227e1be16a0be6ee0",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Cloudflare account.",
+              "example": "258def64c72dae45f3e4c8516e2111f2",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {}
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addressing_api-response-collection"
+                }
+              }
+            },
+            "description": "Add an IP to an Address Map response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-collection"
+                    },
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Add an IP to an Address Map response failure"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "summary": "Add an IP to an Address Map",
+        "tags": [
+          "IP Address Management Address Maps"
+        ],
+        "x-api-token-group": [
+          "Address Maps Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/addressing/address_maps/{address_map_id}/zones/{zone_id}": {
+      "delete": {
+        "description": "Remove a zone as a member of a particular address map.",
+        "operationId": "ip-address-management-address-maps-remove-a-zone-membership-from-an-address-map",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "zone_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a zone.",
+              "example": "8ac8489932db6327334c9b6d58544cfe",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "address_map_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of an Address Map.",
+              "example": "055817b111884e0227e1be16a0be6ee0",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Cloudflare account.",
+              "example": "258def64c72dae45f3e4c8516e2111f2",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {}
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addressing_api-response-collection"
+                }
+              }
+            },
+            "description": "Remove a zone membership from an Address Map response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-collection"
+                    },
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Remove a zone membership from an Address Map response failure"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "summary": "Remove a zone membership from an Address Map",
+        "tags": [
+          "IP Address Management Address Maps"
+        ],
+        "x-api-token-group": [
+          "Address Maps Write"
+        ]
+      },
+      "put": {
+        "description": "Add a zone as a member of a particular address map.",
+        "operationId": "ip-address-management-address-maps-add-a-zone-membership-to-an-address-map",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "zone_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a zone.",
+              "example": "8ac8489932db6327334c9b6d58544cfe",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "address_map_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of an Address Map.",
+              "example": "055817b111884e0227e1be16a0be6ee0",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Cloudflare account.",
+              "example": "258def64c72dae45f3e4c8516e2111f2",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {}
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addressing_api-response-collection"
+                }
+              }
+            },
+            "description": "Add a zone membership to an Address Map response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-collection"
+                    },
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Add a zone membership to an Address Map response failure"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "summary": "Add a zone membership to an Address Map",
+        "tags": [
+          "IP Address Management Address Maps"
+        ]
+      }
+    },
+    "/accounts/{account_id}/addressing/leases": {
+      "get": {
+        "description": "List all leases owned by the account.",
+        "operationId": "ip-address-management-list-leases",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Cloudflare account.",
+              "example": "258def64c72dae45f3e4c8516e2111f2",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addressing_leases_components-schemas-response_collection"
+                }
+              }
+            },
+            "description": "List Leases response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/addressing_leases_components-schemas-response_collection"
+                    },
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "List Leases response failure"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "summary": "List Leases",
+        "tags": [
+          "IP Address Management Leases"
+        ],
+        "x-api-token-group": null
+      }
+    },
+    "/accounts/{account_id}/addressing/loa_documents": {
+      "post": {
+        "description": "Submit LOA document (pdf format) under the account.",
+        "operationId": "ip-address-management-prefixes-upload-loa-document",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Cloudflare account.",
+              "example": "258def64c72dae45f3e4c8516e2111f2",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "properties": {
+                  "loa_document": {
+                    "description": "LOA document to upload.",
+                    "example": "@document.pdf",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "loa_document"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addressing_loa_upload_response"
+                }
+              }
+            },
+            "description": "Upload LOA Document response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/addressing_loa_upload_response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Upload LOA Document response failure"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "summary": "Upload LOA Document",
+        "tags": [
+          "IP Address Management Prefixes"
+        ],
+        "x-api-token-group": [
+          "Magic Transit Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/addressing/loa_documents/{loa_document_id}/download": {
+      "get": {
+        "description": "Download specified LOA document under the account.",
+        "operationId": "ip-address-management-prefixes-download-loa-document",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "loa_document_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier for the uploaded LOA document.",
+              "example": "d933b1530bc56c9953cf8ce166da8004",
+              "maxLength": 32,
+              "nullable": true,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Cloudflare account.",
+              "example": "258def64c72dae45f3e4c8516e2111f2",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "format": "binary",
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Download LOA Document response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {},
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Download LOA Document response failure"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "summary": "Download LOA Document",
+        "tags": [
+          "IP Address Management Prefixes"
+        ],
+        "x-api-token-group": [
+          "Magic Transit Read",
+          "Magic Transit Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/addressing/prefixes": {
+      "get": {
+        "description": "List all prefixes owned by the account.",
+        "operationId": "ip-address-management-prefixes-list-prefixes",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Cloudflare account.",
+              "example": "258def64c72dae45f3e4c8516e2111f2",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addressing_response_collection"
+                }
+              }
+            },
+            "description": "List Prefixes response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/addressing_response_collection"
+                    },
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "List Prefixes response failure"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "summary": "List Prefixes",
+        "tags": [
+          "IP Address Management Prefixes"
+        ],
+        "x-api-token-group": [
+          "Magic Transit Read",
+          "Magic Transit Write",
+          "IP Prefixes: Write",
+          "IP Prefixes: Read",
+          "IP Prefixes: BGP On Demand Write",
+          "IP Prefixes: BGP On Demand Read"
+        ]
+      },
+      "post": {
+        "description": "Add a new prefix under the account.",
+        "operationId": "ip-address-management-prefixes-add-prefix",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Cloudflare account.",
+              "example": "258def64c72dae45f3e4c8516e2111f2",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "asn": {
+                    "description": "Autonomous System Number (ASN) the prefix will be advertised under.",
+                    "example": 13335,
+                    "type": "integer"
+                  },
+                  "cidr": {
+                    "description": "IP Prefix in Classless Inter-Domain Routing format.",
+                    "example": "192.0.2.0/24",
+                    "type": "string"
+                  },
+                  "delegate_loa_creation": {
+                    "default": false,
+                    "description": "Whether Cloudflare is allowed to generate the LOA document on behalf of the prefix owner.",
+                    "example": true,
+                    "type": "boolean"
+                  },
+                  "description": {
+                    "description": "Description of the prefix.",
+                    "example": "Internal test prefix",
+                    "maxLength": 1000,
+                    "type": "string"
+                  },
+                  "loa_document_id": {
+                    "description": "Identifier for the uploaded LOA document.",
+                    "example": "d933b1530bc56c9953cf8ce166da8004",
+                    "maxLength": 32,
+                    "nullable": true,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "cidr",
+                  "asn"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addressing_single_response"
+                }
+              }
+            },
+            "description": "Add Prefix response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/addressing_single_response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Add Prefix response failure"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "summary": "Add Prefix",
+        "tags": [
+          "IP Address Management Prefixes"
+        ],
+        "x-api-token-group": null
+      }
+    },
+    "/accounts/{account_id}/addressing/prefixes/{prefix_id}": {
+      "delete": {
+        "description": "Delete an unapproved prefix owned by the account.",
+        "operationId": "ip-address-management-prefixes-delete-prefix",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "prefix_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of an IP Prefix.",
+              "example": "2af39739cc4e3b5910c918468bb89828",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Cloudflare account.",
+              "example": "258def64c72dae45f3e4c8516e2111f2",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {}
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addressing_api-response-single"
+                }
+              }
+            },
+            "description": "Delete Prefix response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-collection"
+                    },
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Delete Prefix response failure"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "summary": "Delete Prefix",
+        "tags": [
+          "IP Address Management Prefixes"
+        ],
+        "x-api-token-group": [
+          "Magic Transit Write"
+        ]
+      },
+      "get": {
+        "description": "List a particular prefix owned by the account.",
+        "operationId": "ip-address-management-prefixes-prefix-details",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "prefix_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of an IP Prefix.",
+              "example": "2af39739cc4e3b5910c918468bb89828",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Cloudflare account.",
+              "example": "258def64c72dae45f3e4c8516e2111f2",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addressing_single_response"
+                }
+              }
+            },
+            "description": "Prefix Details response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/addressing_single_response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Prefix Details response failure"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "summary": "Prefix Details",
+        "tags": [
+          "IP Address Management Prefixes"
+        ],
+        "x-api-token-group": [
+          "Magic Transit Read",
+          "Magic Transit Write",
+          "IP Prefixes: Write",
+          "IP Prefixes: Read",
+          "IP Prefixes: BGP On Demand Write",
+          "IP Prefixes: BGP On Demand Read"
+        ]
+      },
+      "patch": {
+        "description": "Modify the description for a prefix owned by the account.",
+        "operationId": "ip-address-management-prefixes-update-prefix-description",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "prefix_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of an IP Prefix.",
+              "example": "2af39739cc4e3b5910c918468bb89828",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Cloudflare account.",
+              "example": "258def64c72dae45f3e4c8516e2111f2",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "description": {
+                    "description": "Description of the prefix.",
+                    "example": "Internal test prefix",
+                    "maxLength": 1000,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "description"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addressing_single_response"
+                }
+              }
+            },
+            "description": "Update Prefix Description response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/addressing_single_response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Update Prefix Description response failure"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "summary": "Update Prefix Description",
+        "tags": [
+          "IP Address Management Prefixes"
+        ],
+        "x-api-token-group": [
+          "Magic Transit Write",
+          "IP Prefixes: Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/addressing/prefixes/{prefix_id}/bgp/prefixes": {
+      "get": {
+        "description": "List all BGP Prefixes within the specified IP Prefix. BGP Prefixes are used to control which specific subnets are advertised to the Internet. It is possible to advertise subnets more specific than an IP Prefix by creating more specific BGP Prefixes.",
+        "operationId": "ip-address-management-prefixes-list-bgp-prefixes",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Cloudflare account.",
+              "example": "258def64c72dae45f3e4c8516e2111f2",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "prefix_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of an IP Prefix.",
+              "example": "2af39739cc4e3b5910c918468bb89828",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addressing_response_collection_bgp"
+                }
+              }
+            },
+            "description": "List BGP Prefixes response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/addressing_response_collection_bgp"
+                    },
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "List BGP Prefixes response failure"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "summary": "List BGP Prefixes",
+        "tags": [
+          "IP Address Management BGP Prefixes"
+        ],
+        "x-api-token-group": [
+          "Magic Transit Read",
+          "Magic Transit Write",
+          "IP Prefixes: Write",
+          "IP Prefixes: Read",
+          "IP Prefixes: BGP On Demand Write",
+          "IP Prefixes: BGP On Demand Read"
+        ]
+      },
+      "post": {
+        "description": "Create a BGP prefix, controlling the BGP advertisement status of a specific subnet. When created, BGP prefixes are initially withdrawn, and can be advertised with the Update BGP Prefix API.",
+        "operationId": "ip-address-management-prefixes-create-bgp-prefix",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Cloudflare account.",
+              "example": "258def64c72dae45f3e4c8516e2111f2",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "prefix_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of an IP Prefix.",
+              "example": "2af39739cc4e3b5910c918468bb89828",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/addressing_bgp_prefix_create"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addressing_single_response_bgp"
+                }
+              }
+            },
+            "description": "Create BGP Prefix response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/addressing_single_response_bgp"
+                    },
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Create BGP Prefix response failure"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "summary": "Create BGP Prefix",
+        "tags": [
+          "IP Address Management BGP Prefixes"
+        ]
+      }
+    },
+    "/accounts/{account_id}/addressing/prefixes/{prefix_id}/bgp/prefixes/{bgp_prefix_id}": {
+      "delete": {
+        "description": "Delete a BGP Prefix associated with the specified IP Prefix. A BGP Prefix must be withdrawn before it can be deleted.",
+        "operationId": "ip-address-management-prefixes-delete-bgp-prefix",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Cloudflare account.",
+              "example": "258def64c72dae45f3e4c8516e2111f2",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "prefix_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of an IP Prefix.",
+              "example": "2af39739cc4e3b5910c918468bb89828",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "bgp_prefix_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of BGP Prefix.",
+              "example": "7009ba364c7a5760798ceb430e603b74",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addressing_api-response-common"
+                }
+              }
+            },
+            "description": "Delete BGP Prefix response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addressing_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Delete BGP Prefix response failure"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "summary": "Delete BGP Prefix",
+        "tags": [
+          "IP Address Management BGP Prefixes"
+        ]
+      },
+      "get": {
+        "description": "Retrieve a single BGP Prefix according to its identifier",
+        "operationId": "ip-address-management-prefixes-fetch-bgp-prefix",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Cloudflare account.",
+              "example": "258def64c72dae45f3e4c8516e2111f2",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "prefix_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of an IP Prefix.",
+              "example": "2af39739cc4e3b5910c918468bb89828",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "bgp_prefix_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of BGP Prefix.",
+              "example": "7009ba364c7a5760798ceb430e603b74",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addressing_single_response_bgp"
+                }
+              }
+            },
+            "description": "Fetch BGP Prefix response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/addressing_single_response_bgp"
+                    },
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Fetch BGP Prefix response failure"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "summary": "Fetch BGP Prefix",
+        "tags": [
+          "IP Address Management BGP Prefixes"
+        ],
+        "x-api-token-group": [
+          "Magic Transit Read",
+          "Magic Transit Write",
+          "IP Prefixes: Write",
+          "IP Prefixes: Read",
+          "IP Prefixes: BGP On Demand Write",
+          "IP Prefixes: BGP On Demand Read"
+        ]
+      },
+      "patch": {
+        "description": "Update the properties of a BGP Prefix, such as the on demand advertisement status (advertised or withdrawn).",
+        "operationId": "ip-address-management-prefixes-update-bgp-prefix",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Cloudflare account.",
+              "example": "258def64c72dae45f3e4c8516e2111f2",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "prefix_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of an IP Prefix.",
+              "example": "2af39739cc4e3b5910c918468bb89828",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "bgp_prefix_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of BGP Prefix.",
+              "example": "7009ba364c7a5760798ceb430e603b74",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/addressing_bgp_prefix_update_advertisement"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addressing_single_response_bgp"
+                }
+              }
+            },
+            "description": "Update BGP Prefix response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/addressing_single_response_bgp"
+                    },
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Update BGP Prefix response failure"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "summary": "Update BGP Prefix",
+        "tags": [
+          "IP Address Management BGP Prefixes"
+        ],
+        "x-api-token-group": [
+          "Magic Transit Write",
+          "IP Prefixes: Write",
+          "IP Prefixes: BGP On Demand Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/addressing/prefixes/{prefix_id}/bgp/status": {
+      "get": {
+        "deprecated": true,
+        "description": "View the current advertisement state for a prefix.\n\n**Deprecated:** Prefer the BGP Prefixes endpoints, which additionally allow for advertising and withdrawing \nsubnets of an IP prefix.\n",
+        "operationId": "ip-address-management-dynamic-advertisement-get-advertisement-status",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "prefix_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of an IP Prefix.",
+              "example": "2af39739cc4e3b5910c918468bb89828",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Cloudflare account.",
+              "example": "258def64c72dae45f3e4c8516e2111f2",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addressing_advertised_response"
+                }
+              }
+            },
+            "description": "Get Advertisement Status response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/addressing_advertised_response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Get Advertisement Status response failure"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "summary": "Get Advertisement Status",
+        "tags": [
+          "IP Address Management Dynamic Advertisement"
+        ],
+        "x-api-token-group": [
+          "Magic Transit Read",
+          "Magic Transit Write",
+          "IP Prefixes: Write",
+          "IP Prefixes: Read",
+          "IP Prefixes: BGP On Demand Write",
+          "IP Prefixes: BGP On Demand Read"
+        ]
+      },
+      "patch": {
+        "deprecated": true,
+        "description": "Advertise or withdraw the BGP route for a prefix.\n\n**Deprecated:** Prefer the BGP Prefixes endpoints, which additionally allow for advertising and withdrawing \nsubnets of an IP prefix.\n",
+        "operationId": "ip-address-management-dynamic-advertisement-update-prefix-dynamic-advertisement-status",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "prefix_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of an IP Prefix.",
+              "example": "2af39739cc4e3b5910c918468bb89828",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Cloudflare account.",
+              "example": "258def64c72dae45f3e4c8516e2111f2",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "advertised": {
+                    "description": "Advertisement status of the prefix. If `true`, the BGP route for the prefix is advertised to the Internet. If \n`false`, the BGP route is withdrawn.\n",
+                    "example": true,
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "advertised"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addressing_advertised_response"
+                }
+              }
+            },
+            "description": "Update Prefix Dynamic Advertisement Status response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/addressing_advertised_response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Update Prefix Dynamic Advertisement Status response failure"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "summary": "Update Prefix Dynamic Advertisement Status",
+        "tags": [
+          "IP Address Management Dynamic Advertisement"
+        ],
+        "x-api-token-group": [
+          "Magic Transit Write",
+          "IP Prefixes: Write",
+          "IP Prefixes: BGP On Demand Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/addressing/prefixes/{prefix_id}/bindings": {
+      "get": {
+        "description": "List the Cloudflare services this prefix is currently bound to. Traffic sent to an address within an IP prefix will be routed to the Cloudflare service of the most-specific Service Binding matching the address.\n**Example:** binding `192.0.2.0/24` to Cloudflare Magic Transit and `192.0.2.1/32` to the Cloudflare CDN would route traffic for `192.0.2.1` to the CDN, and traffic for all other IPs in the prefix to Cloudflare Magic Transit.\n",
+        "operationId": "ip-address-management-service-bindings-list-service-bindings",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Cloudflare account.",
+              "example": "258def64c72dae45f3e4c8516e2111f2",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "prefix_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of an IP Prefix.",
+              "example": "2af39739cc4e3b5910c918468bb89828",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-common"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "items": {
+                            "$ref": "#/components/schemas/addressing_service_binding"
+                          },
+                          "type": "array"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Service Bindings attached to the Prefix"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addressing_api-response-common-failure"
+                }
+              }
+            },
+            "description": "List Service Bindings response failure"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "summary": "List Service Bindings",
+        "tags": [
+          "IP Address Management Service Bindings"
+        ],
+        "x-api-token-group": [
+          "IP Prefixes: Write",
+          "IP Prefixes: Read"
+        ]
+      },
+      "post": {
+        "description": "Creates a new Service Binding, routing traffic to IPs within the given CIDR to a service running on Cloudflare's network.\n**NOTE:** The first Service Binding created for an IP Prefix must exactly match the IP Prefix's CIDR. Subsequent Service Bindings may be created with a more-specific CIDR. Refer to the  [Service Bindings Documentation](https://developers.cloudflare.com/byoip/service-bindings/) for compatibility details.\n",
+        "operationId": "ip-address-management-service-bindings-create-service-binding",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Cloudflare account.",
+              "example": "258def64c72dae45f3e4c8516e2111f2",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "prefix_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of an IP Prefix.",
+              "example": "2af39739cc4e3b5910c918468bb89828",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/addressing_create_binding_request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-common"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/addressing_service_binding"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "The created Service Binding"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addressing_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Create Service Binding response failure"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "summary": "Create Service Binding",
+        "tags": [
+          "IP Address Management Service Bindings"
+        ],
+        "x-api-token-group": [
+          "IP Prefixes: Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/addressing/prefixes/{prefix_id}/bindings/{binding_id}": {
+      "delete": {
+        "description": "Delete a Service Binding",
+        "operationId": "ip-address-management-service-bindings-delete-service-binding",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Cloudflare account.",
+              "example": "258def64c72dae45f3e4c8516e2111f2",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "prefix_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of an IP Prefix.",
+              "example": "2af39739cc4e3b5910c918468bb89828",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "binding_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Service Binding.",
+              "example": "0429b49b6a5155297b78e75a44b09e14",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addressing_api-response-common"
+                }
+              }
+            },
+            "description": "Service Binding deleted"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addressing_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Delete Service Binding response failure"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "summary": "Delete Service Binding",
+        "tags": [
+          "IP Address Management Service Bindings"
+        ],
+        "x-api-token-group": [
+          "IP Prefixes: Write"
+        ]
+      },
+      "get": {
+        "description": "Fetch a single Service Binding",
+        "operationId": "ip-address-management-service-bindings-get-service-binding",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Cloudflare account.",
+              "example": "258def64c72dae45f3e4c8516e2111f2",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "prefix_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of an IP Prefix.",
+              "example": "2af39739cc4e3b5910c918468bb89828",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "binding_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Service Binding.",
+              "example": "0429b49b6a5155297b78e75a44b09e14",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-common"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/addressing_service_binding"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "The Service Binding with the requested ID"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addressing_api-response-common-failure"
+                }
+              }
+            },
+            "description": "Get Service Binding response failure"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "summary": "Get Service Binding",
+        "tags": [
+          "IP Address Management Service Bindings"
+        ],
+        "x-api-token-group": [
+          "IP Prefixes: Write",
+          "IP Prefixes: Read"
+        ]
+      }
+    },
+    "/accounts/{account_id}/addressing/prefixes/{prefix_id}/delegations": {
+      "get": {
+        "description": "List all delegations for a given account IP prefix.",
+        "operationId": "ip-address-management-prefix-delegation-list-prefix-delegations",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "prefix_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of an IP Prefix.",
+              "example": "2af39739cc4e3b5910c918468bb89828",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Cloudflare account.",
+              "example": "258def64c72dae45f3e4c8516e2111f2",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addressing_schemas-response_collection"
+                }
+              }
+            },
+            "description": "List Prefix Delegations response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/addressing_schemas-response_collection"
+                    },
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "List Prefix Delegations response failure"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "summary": "List Prefix Delegations",
+        "tags": [
+          "IP Address Management Prefix Delegation"
+        ]
+      },
+      "post": {
+        "description": "Create a new account delegation for a given IP prefix.",
+        "operationId": "ip-address-management-prefix-delegation-create-prefix-delegation",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "prefix_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of an IP Prefix.",
+              "example": "2af39739cc4e3b5910c918468bb89828",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Cloudflare account.",
+              "example": "258def64c72dae45f3e4c8516e2111f2",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "cidr": {
+                    "description": "IP Prefix in Classless Inter-Domain Routing format.",
+                    "example": "192.0.2.0/24",
+                    "type": "string"
+                  },
+                  "delegated_account_id": {
+                    "description": "Account identifier for the account to which prefix is being delegated.",
+                    "example": "b1946ac92492d2347c6235b4d2611184",
+                    "maxLength": 32,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "cidr",
+                  "delegated_account_id"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addressing_schemas-single_response"
+                }
+              }
+            },
+            "description": "Create Prefix Delegation response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/addressing_schemas-single_response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Create Prefix Delegation response failure"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "summary": "Create Prefix Delegation",
+        "tags": [
+          "IP Address Management Prefix Delegation"
+        ],
+        "x-api-token-group": [
+          "IP Prefixes: Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/addressing/prefixes/{prefix_id}/delegations/{delegation_id}": {
+      "delete": {
+        "description": "Delete an account delegation for a given IP prefix.",
+        "operationId": "ip-address-management-prefix-delegation-delete-prefix-delegation",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "delegation_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Delegation.",
+              "example": "d933b1530bc56c9953cf8ce166da8004",
+              "maxLength": 32,
+              "readOnly": true,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "prefix_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of an IP Prefix.",
+              "example": "2af39739cc4e3b5910c918468bb89828",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Cloudflare account.",
+              "example": "258def64c72dae45f3e4c8516e2111f2",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {}
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addressing_id_response"
+                }
+              }
+            },
+            "description": "Delete Prefix Delegation response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/addressing_id_response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Delete Prefix Delegation response failure"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "summary": "Delete Prefix Delegation",
+        "tags": [
+          "IP Address Management Prefix Delegation"
+        ],
+        "x-api-token-group": [
+          "IP Prefixes: Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/addressing/prefixes/{prefix_id}/validate": {
+      "post": {
+        "description": "Triggers a new prefix validation. The checks are run asynchronously and include IRR, RPKI, and prefix ownership.",
+        "operationId": "ip-address-management-prefixes-validate-prefix",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "prefix_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of an IP Prefix.",
+              "example": "2af39739cc4e3b5910c918468bb89828",
+              "maxLength": 32,
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Cloudflare account.",
+              "example": "258def64c72dae45f3e4c8516e2111f2",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addressing_single_response"
+                }
+              }
+            },
+            "description": "Validate Prefix response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/addressing_single_response"
+                    },
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Validate Prefix response failure"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "summary": "Validate Prefix",
+        "tags": [
+          "IP Address Management Prefixes"
+        ],
+        "x-api-token-group": [
+          "Magic Transit Write",
+          "IP Prefixes: Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/addressing/regional_hostnames/regions": {
+      "get": {
+        "description": "List all Regional Services regions available for use by this account.",
+        "operationId": "dls-account-regional-hostnames-account-list-regions",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/dls_account_id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dls_api-response-collection"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "items": {
+                            "properties": {
+                              "key": {
+                                "description": "Identifying key for the region",
+                                "example": "ca",
+                                "type": "string"
+                              },
+                              "label": {
+                                "description": "Human-readable text label for the region",
+                                "example": "Canada",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "List regions response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dls_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Failure to list regions"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          },
+          {
+            "api_token": []
+          }
+        ],
+        "summary": "List Regions",
+        "tags": [
+          "DLS Regional Services"
+        ],
+        "x-api-token-group": [
+          "DNS Read",
+          "DNS Write"
+        ]
+      }
+    },
+    "/accounts/{account_id}/addressing/services": {
+      "get": {
+        "description": "Bring-Your-Own IP (BYOIP) prefixes onboarded to Cloudflare must be bound to a service running on the Cloudflare network to enable a Cloudflare product on the IP addresses. This endpoint can be used as a reference of available services on the Cloudflare network, and their service IDs.\n",
+        "operationId": "ip-address-management-service-bindings-list-services",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "description": "Identifier of a Cloudflare account.",
+              "example": "258def64c72dae45f3e4c8516e2111f2",
+              "maxLength": 32,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/addressing_api-response-common"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "items": {
+                            "properties": {
+                              "id": {
+                                "description": "Identifier of a Service on the Cloudflare network. Available services and their IDs may be found in the\n**List Services** endpoint.\n",
+                                "example": "2db684ee7ca04e159946fd05b99e1bcd",
+                                "maxLength": 32,
+                                "type": "string"
+                              },
+                              "name": {
+                                "description": "Name of a service running on the Cloudflare network",
+                                "example": "Magic Transit",
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "type": "array"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Service names and IDs"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addressing_api-response-common-failure"
+                }
+              }
+            },
+            "description": "List Services response failure"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          }
+        ],
+        "summary": "List Services",
+        "tags": [
+          "IP Address Management Service Bindings"
+        ],
+        "x-api-token-group": [
+          "IP Prefixes: Write",
+          "IP Prefixes: Read"
+        ]
+      }
+    },
+    "/zones/{zone_id}/addressing/regional_hostnames": {
+      "get": {
+        "description": "List all Regional Hostnames within a zone.",
+        "operationId": "dls-account-regional-hostnames-account-list-hostnames",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/dls_zone_id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dls_api-response-collection"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "items": {
+                            "$ref": "#/components/schemas/dls_regional_hostname_response"
+                          },
+                          "type": "array"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "List hostnames response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dls_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Failure to list hostnames"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          },
+          {
+            "api_token": []
+          }
+        ],
+        "summary": "List Regional Hostnames",
+        "tags": [
+          "DLS Regional Services"
+        ],
+        "x-api-token-group": [
+          "DNS Read",
+          "DNS Write"
+        ]
+      },
+      "post": {
+        "description": "Create a new Regional Hostname entry. Cloudflare will only use data centers that are physically located within the chosen region to decrypt and service HTTPS traffic. Learn more about [Regional Services](https://developers.cloudflare.com/data-localization/regional-services/get-started/).",
+        "operationId": "dls-account-regional-hostnames-account-create-hostname",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/dls_zone_id"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "hostname": {
+                    "description": "DNS hostname to be regionalized, must be a subdomain of the zone. Wildcards are supported for one level, e.g `*.example.com`",
+                    "example": "foo.example.com",
+                    "type": "string"
+                  },
+                  "region_key": {
+                    "description": "Identifying key for the region",
+                    "example": "ca",
+                    "type": "string"
+                  },
+                  "routing": {
+                    "default": "dns",
+                    "description": "Configure which routing method to use for the regional hostname",
+                    "example": "dns",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "hostname",
+                  "region_key"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dls_api-response-common"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dls_regional_hostname_response"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Create hostname response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dls_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Failure to create hostname"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          },
+          {
+            "api_token": []
+          }
+        ],
+        "summary": "Create Regional Hostname",
+        "tags": [
+          "DLS Regional Services"
+        ],
+        "x-api-token-group": [
+          "DNS Write"
+        ]
+      }
+    },
+    "/zones/{zone_id}/addressing/regional_hostnames/{hostname}": {
+      "delete": {
+        "description": "Delete the region configuration for a specific Regional Hostname.",
+        "operationId": "dls-account-regional-hostnames-account-delete-hostname",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/dls_zone_id"
+          },
+          {
+            "$ref": "#/components/parameters/dls_hostname"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dls_api-response-common"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Delete hostname response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dls_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Failure to delete hostname"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          },
+          {
+            "api_token": []
+          }
+        ],
+        "summary": "Delete Regional Hostname",
+        "tags": [
+          "DLS Regional Services"
+        ],
+        "x-api-token-group": [
+          "DNS Write"
+        ]
+      },
+      "get": {
+        "description": "Fetch the configuration for a specific Regional Hostname, within a zone.",
+        "operationId": "dls-account-regional-hostnames-account-fetch-hostname",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/dls_zone_id"
+          },
+          {
+            "$ref": "#/components/parameters/dls_hostname"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/dls_api-response-common"
+                        }
+                      ],
+                      "type": "object"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dls_regional_hostname_response"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Fetch hostname response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dls_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Failure to fetch hostname"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          },
+          {
+            "api_token": []
+          }
+        ],
+        "summary": "Fetch Regional Hostname",
+        "tags": [
+          "DLS Regional Services"
+        ],
+        "x-api-token-group": [
+          "DNS Read",
+          "DNS Write"
+        ]
+      },
+      "patch": {
+        "description": "Update the configuration for a specific Regional Hostname. Only the region_key of a hostname is mutable.",
+        "operationId": "dls-account-regional-hostnames-account-patch-hostname",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/dls_zone_id"
+          },
+          {
+            "$ref": "#/components/parameters/dls_hostname"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "region_key": {
+                    "description": "Identifying key for the region",
+                    "example": "ca",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "region_key"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dls_api-response-common"
+                    },
+                    {
+                      "properties": {
+                        "result": {
+                          "$ref": "#/components/schemas/dls_regional_hostname_response"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Update hostname response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/dls_api-response-common-failure"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Failure to update hostname"
+          }
+        },
+        "security": [
+          {
+            "api_email": [],
+            "api_key": []
+          },
+          {
+            "api_token": []
+          }
+        ],
+        "summary": "Update Regional Hostname",
+        "tags": [
+          "DLS Regional Services"
+        ],
+        "x-api-token-group": [
+          "DNS Write"
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "addressing_components-schemas-single_response": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/addressing_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/addressing_address-maps"
+              }
+            }
+          }
+        ]
+      },
+      "addressing_api-response-collection": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/addressing_api-response-common"
+          },
+          {
+            "properties": {
+              "result_info": {
+                "properties": {
+                  "count": {
+                    "description": "Total number of results for the requested service.",
+                    "example": 1,
+                    "type": "number"
+                  },
+                  "page": {
+                    "description": "Current page within paginated list of results.",
+                    "example": 1,
+                    "type": "number"
+                  },
+                  "per_page": {
+                    "description": "Number of results per page of results.",
+                    "example": 20,
+                    "type": "number"
+                  },
+                  "total_count": {
+                    "description": "Total results available without any search parameters.",
+                    "example": 2000,
+                    "type": "number"
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "type": "object"
+      },
+      "addressing_response_collection": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/addressing_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "items": {
+                  "$ref": "#/components/schemas/addressing_ipam-prefixes"
+                },
+                "type": "array"
+              }
+            }
+          }
+        ]
+      },
+      "addressing_advertised_response": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/addressing_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "properties": {
+                  "advertised": {
+                    "description": "Advertisement status of the prefix. If `true`, the BGP route for the prefix is advertised to the Internet. If \n`false`, the BGP route is withdrawn.\n",
+                    "example": true,
+                    "type": "boolean"
+                  },
+                  "advertised_modified_at": {
+                    "description": "Last time the advertisement status was changed. This field is only not 'null' if on demand is enabled.",
+                    "example": "2014-01-01T05:20:00.12345Z",
+                    "format": "date-time",
+                    "nullable": true,
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        ]
+      },
+      "addressing_schemas-single_response": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/addressing_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/addressing_ipam-delegations"
+              }
+            }
+          }
+        ]
+      },
+      "addressing_api-response-common-failure": {
+        "properties": {
+          "errors": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/addressing_messages"
+              }
+            ],
+            "example": [
+              {
+                "code": 7003,
+                "message": "No route for the URI"
+              }
+            ],
+            "minLength": 1
+          },
+          "messages": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/addressing_messages"
+              }
+            ],
+            "example": []
+          },
+          "result": {
+            "enum": [
+              null
+            ],
+            "nullable": true,
+            "type": "object"
+          },
+          "success": {
+            "description": "Whether the API call was successful.",
+            "enum": [
+              false
+            ],
+            "example": false,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success",
+          "errors",
+          "messages",
+          "result"
+        ],
+        "type": "object"
+      },
+      "addressing_create_binding_request": {
+        "properties": {
+          "cidr": {
+            "description": "IP Prefix in Classless Inter-Domain Routing format.",
+            "example": "192.0.2.0/24",
+            "type": "string"
+          },
+          "service_id": {
+            "description": "Identifier of a Service on the Cloudflare network. Available services and their IDs may be found in the\n**List Services** endpoint.\n",
+            "example": "2db684ee7ca04e159946fd05b99e1bcd",
+            "maxLength": 32,
+            "type": "string"
+          }
+        },
+        "required": [
+          "cidr",
+          "service_id"
+        ],
+        "type": "object"
+      },
+      "addressing_components-schemas-response_collection": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/addressing_api-response-collection"
+          },
+          {
+            "properties": {
+              "result": {
+                "items": {
+                  "$ref": "#/components/schemas/addressing_address-maps"
+                },
+                "type": "array"
+              }
+            }
+          }
+        ]
+      },
+      "addressing_full_response": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/addressing_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/addressing_address-maps"
+                  },
+                  {
+                    "properties": {
+                      "ips": {
+                        "$ref": "#/components/schemas/addressing_ips"
+                      },
+                      "memberships": {
+                        "$ref": "#/components/schemas/addressing_memberships"
+                      }
+                    },
+                    "type": "object"
+                  }
+                ]
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "addressing_membership_requests": {
+        "description": "Zones and Accounts which will be assigned IPs on this Address Map. A zone membership will take priority over an account membership.",
+        "example": [
+          {
+            "identifier": "023e105f4ecef8ad9ca31a8372d0c353",
+            "kind": "zone"
+          }
+        ],
+        "items": {
+          "$ref": "#/components/schemas/addressing_address-maps-membership-request"
+        },
+        "type": "array"
+      },
+      "dls_regional_hostname_response": {
+        "properties": {
+          "created_on": {
+            "allOf": [
+              {
+                "example": "2014-01-01T05:20:00.12345Z",
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "description": "When the regional hostname was created"
+              },
+              {
+                "example": "2014-01-01T05:20:00.12345Z"
+              }
+            ]
+          },
+          "hostname": {
+            "description": "DNS hostname to be regionalized, must be a subdomain of the zone. Wildcards are supported for one level, e.g `*.example.com`",
+            "example": "foo.example.com",
+            "type": "string"
+          },
+          "region_key": {
+            "description": "Identifying key for the region",
+            "example": "ca",
+            "type": "string"
+          },
+          "routing": {
+            "default": "dns",
+            "description": "Configure which routing method to use for the regional hostname",
+            "example": "dns",
+            "type": "string"
+          }
+        },
+        "required": [
+          "hostname",
+          "region_key",
+          "created_on"
+        ],
+        "type": "object"
+      },
+      "dls_api-response-collection": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/dls_api-response-common"
+          },
+          {
+            "properties": {
+              "result_info": {
+                "properties": {
+                  "count": {
+                    "description": "Total number of results for the requested service.",
+                    "example": 1,
+                    "type": "number"
+                  },
+                  "page": {
+                    "description": "Current page within paginated list of results.",
+                    "example": 1,
+                    "type": "number"
+                  },
+                  "per_page": {
+                    "description": "Number of results per page of results.",
+                    "example": 20,
+                    "type": "number"
+                  },
+                  "total_count": {
+                    "description": "Total results available without any search parameters.",
+                    "example": 2000,
+                    "type": "number"
+                  },
+                  "total_pages": {
+                    "description": "The number of total pages in the entire result set.",
+                    "example": 100,
+                    "type": "number"
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          }
+        ],
+        "type": "object"
+      },
+      "addressing_memberships": {
+        "description": "Zones and Accounts which will be assigned IPs on this Address Map. A zone membership will take priority over an account membership.",
+        "items": {
+          "$ref": "#/components/schemas/addressing_address-maps-membership"
+        },
+        "type": "array"
+      },
+      "addressing_service_binding": {
+        "properties": {
+          "cidr": {
+            "description": "IP Prefix in Classless Inter-Domain Routing format.",
+            "example": "192.0.2.0/24",
+            "type": "string"
+          },
+          "id": {
+            "description": "Identifier of a Service Binding.",
+            "example": "0429b49b6a5155297b78e75a44b09e14",
+            "maxLength": 32,
+            "type": "string"
+          },
+          "provisioning": {
+            "$ref": "#/components/schemas/addressing_provisioning"
+          },
+          "service_id": {
+            "description": "Identifier of a Service on the Cloudflare network. Available services and their IDs may be found in the\n**List Services** endpoint.\n",
+            "example": "2db684ee7ca04e159946fd05b99e1bcd",
+            "maxLength": 32,
+            "type": "string"
+          },
+          "service_name": {
+            "description": "Name of a service running on the Cloudflare network",
+            "example": "Magic Transit",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "addressing_ips": {
+        "description": "The set of IPs on the Address Map.",
+        "items": {
+          "$ref": "#/components/schemas/addressing_address-maps-ip"
+        },
+        "type": "array"
+      },
+      "addressing_api-response-single": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/addressing_api-response-common"
+          }
+        ],
+        "type": "object"
+      },
+      "addressing_response_collection_bgp": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/addressing_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "items": {
+                  "$ref": "#/components/schemas/addressing_ipam-bgp-prefixes"
+                },
+                "type": "array"
+              }
+            }
+          }
+        ]
+      },
+      "addressing_bgp_prefix_update_advertisement": {
+        "properties": {
+          "asn_prepend_count": {
+            "default": 0,
+            "description": "Number of times to prepend the Cloudflare ASN to the BGP AS-Path attribute",
+            "example": 2,
+            "maximum": 3,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "auto_advertise_withdraw": {
+            "default": false,
+            "description": "Determines if Cloudflare advertises a BYOIP BGP prefix even when there is no matching BGP prefix in the Magic routing table. When true, Cloudflare will automatically withdraw the BGP prefix when there are no matching BGP routes, and will resume advertising when there is at least one matching BGP route.",
+            "example": true,
+            "type": "boolean"
+          },
+          "on_demand": {
+            "properties": {
+              "advertised": {
+                "type": "boolean"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "addressing_api-response-common": {
+        "properties": {
+          "errors": {
+            "$ref": "#/components/schemas/addressing_messages"
+          },
+          "messages": {
+            "$ref": "#/components/schemas/addressing_messages"
+          },
+          "success": {
+            "description": "Whether the API call was successful.",
+            "enum": [
+              true
+            ],
+            "example": true,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success",
+          "errors",
+          "messages"
+        ],
+        "type": "object"
+      },
+      "addressing_address-maps-membership-request": {
+        "properties": {
+          "identifier": {
+            "description": "The identifier for the membership (eg. a zone or account tag).",
+            "example": "023e105f4ecef8ad9ca31a8372d0c353",
+            "maxLength": 32,
+            "type": "string"
+          },
+          "kind": {
+            "description": "The type of the membership.",
+            "enum": [
+              "zone",
+              "account"
+            ],
+            "example": "zone",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "addressing_address-maps-ip": {
+        "properties": {
+          "created_at": {
+            "example": "2014-01-01T05:20:00.12345Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "ip": {
+            "description": "An IPv4 or IPv6 address.",
+            "example": "192.0.2.1",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "addressing_schemas-response_collection": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/addressing_api-response-collection"
+          },
+          {
+            "properties": {
+              "result": {
+                "items": {
+                  "$ref": "#/components/schemas/addressing_ipam-delegations"
+                },
+                "type": "array"
+              }
+            }
+          }
+        ]
+      },
+      "addressing_ipam-prefixes": {
+        "properties": {
+          "account_id": {
+            "description": "Identifier of a Cloudflare account.",
+            "example": "258def64c72dae45f3e4c8516e2111f2",
+            "maxLength": 32,
+            "type": "string"
+          },
+          "advertised": {
+            "deprecated": true,
+            "description": "Prefix advertisement status to the Internet. This field is only not 'null' if on demand is enabled.",
+            "example": true,
+            "nullable": true,
+            "type": "boolean"
+          },
+          "advertised_modified_at": {
+            "deprecated": true,
+            "description": "Last time the advertisement status was changed. This field is only not 'null' if on demand is enabled.",
+            "example": "2014-01-01T05:20:00.12345Z",
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
+          },
+          "approved": {
+            "description": "Approval state of the prefix (P = pending, V = active).",
+            "example": "P",
+            "type": "string"
+          },
+          "asn": {
+            "description": "Autonomous System Number (ASN) the prefix will be advertised under.",
+            "example": 13335,
+            "type": "integer"
+          },
+          "cidr": {
+            "description": "IP Prefix in Classless Inter-Domain Routing format.",
+            "example": "192.0.2.0/24",
+            "type": "string"
+          },
+          "created_at": {
+            "example": "2014-01-01T05:20:00.12345Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "delegate_loa_creation": {
+            "default": false,
+            "description": "Whether Cloudflare is allowed to generate the LOA document on behalf of the prefix owner.",
+            "example": true,
+            "type": "boolean"
+          },
+          "description": {
+            "description": "Description of the prefix.",
+            "example": "Internal test prefix",
+            "maxLength": 1000,
+            "type": "string"
+          },
+          "id": {
+            "description": "Identifier of an IP Prefix.",
+            "example": "2af39739cc4e3b5910c918468bb89828",
+            "maxLength": 32,
+            "type": "string"
+          },
+          "irr_validation_state": {
+            "description": "State of one kind of validation for an IP prefix.",
+            "example": "pending",
+            "type": "string"
+          },
+          "loa_document_id": {
+            "description": "Identifier for the uploaded LOA document.",
+            "example": "d933b1530bc56c9953cf8ce166da8004",
+            "maxLength": 32,
+            "nullable": true,
+            "type": "string"
+          },
+          "modified_at": {
+            "example": "2014-01-01T05:20:00.12345Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "on_demand_enabled": {
+            "deprecated": true,
+            "description": "Whether advertisement of the prefix to the Internet may be dynamically enabled or disabled.",
+            "example": true,
+            "type": "boolean"
+          },
+          "on_demand_locked": {
+            "deprecated": true,
+            "description": "Whether advertisement status of the prefix is locked, meaning it cannot be changed.",
+            "example": false,
+            "type": "boolean"
+          },
+          "ownership_validation_state": {
+            "description": "State of one kind of validation for an IP prefix.",
+            "example": "pending",
+            "type": "string"
+          },
+          "ownership_validation_token": {
+            "description": "Token provided to demonstrate ownership of the prefix.",
+            "example": "1234a5b6-1234-1abc-12a3-1234a5b6789c",
+            "type": "string"
+          },
+          "rpki_validation_state": {
+            "description": "State of one kind of validation for an IP prefix.",
+            "example": "pending",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "addressing_bgp_prefix_create": {
+        "properties": {
+          "cidr": {
+            "description": "IP Prefix in Classless Inter-Domain Routing format.",
+            "example": "192.0.2.0/24",
+            "type": "string"
+          }
+        },
+        "required": [
+          "cidr"
+        ],
+        "type": "object"
+      },
+      "addressing_loa_upload_response": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/addressing_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "properties": {
+                  "account_id": {
+                    "description": "Identifier of a Cloudflare account.",
+                    "example": "258def64c72dae45f3e4c8516e2111f2",
+                    "maxLength": 32,
+                    "type": "string"
+                  },
+                  "auto_generated": {
+                    "description": "Whether the LOA has been auto-generated for the prefix owner by Cloudflare.",
+                    "example": true,
+                    "type": "boolean"
+                  },
+                  "created": {
+                    "example": "2014-01-01T05:20:00.12345Z",
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  "filename": {
+                    "description": "Name of LOA document. Max file size 10MB, and supported filetype is pdf.",
+                    "example": "site_loa_doc.pdf",
+                    "type": "string"
+                  },
+                  "id": {
+                    "description": "Identifier for the uploaded LOA document.",
+                    "example": "d933b1530bc56c9953cf8ce166da8004",
+                    "maxLength": 32,
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "size_bytes": {
+                    "description": "File size of the uploaded LOA document.",
+                    "example": 444,
+                    "type": "integer"
+                  },
+                  "verified": {
+                    "description": "Whether the LOA has been verified by Cloudflare staff.",
+                    "example": true,
+                    "type": "boolean"
+                  },
+                  "verified_at": {
+                    "description": "Timestamp of the moment the LOA was marked as validated.",
+                    "format": "date-time",
+                    "nullable": true,
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        ]
+      },
+      "addressing_single_response_bgp": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/addressing_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/addressing_ipam-bgp-prefixes"
+              }
+            }
+          }
+        ]
+      },
+      "dls_api-response-common-failure": {
+        "properties": {
+          "errors": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/dls_messages"
+              }
+            ],
+            "example": [
+              {
+                "code": 7003,
+                "message": "No route for the URI"
+              }
+            ],
+            "minLength": 1
+          },
+          "messages": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/dls_messages"
+              }
+            ],
+            "example": []
+          },
+          "result": {
+            "enum": [
+              null
+            ],
+            "nullable": true,
+            "type": "object"
+          },
+          "success": {
+            "description": "Whether the API call was successful.",
+            "enum": [
+              false
+            ],
+            "example": false,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success",
+          "errors",
+          "messages",
+          "result"
+        ],
+        "type": "object"
+      },
+      "addressing_provisioning": {
+        "description": "Status of a Service Binding's deployment to the Cloudflare network",
+        "properties": {
+          "state": {
+            "description": "When a binding has been deployed to a majority of Cloudflare datacenters, the binding will become active and can be used with its associated service.\n",
+            "enum": [
+              "provisioning",
+              "active"
+            ],
+            "example": "provisioning",
+            "type": "string",
+            "x-auditable": true
+          }
+        },
+        "type": "object"
+      },
+      "addressing_id_response": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/addressing_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "properties": {
+                  "id": {
+                    "description": "Identifier of a Delegation.",
+                    "example": "d933b1530bc56c9953cf8ce166da8004",
+                    "maxLength": 32,
+                    "readOnly": true,
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        ]
+      },
+      "addressing_ipam-delegations": {
+        "properties": {
+          "cidr": {
+            "description": "IP Prefix in Classless Inter-Domain Routing format.",
+            "example": "192.0.2.0/24",
+            "type": "string"
+          },
+          "created_at": {
+            "example": "2014-01-01T05:20:00.12345Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "delegated_account_id": {
+            "description": "Account identifier for the account to which prefix is being delegated.",
+            "example": "b1946ac92492d2347c6235b4d2611184",
+            "maxLength": 32,
+            "type": "string"
+          },
+          "id": {
+            "description": "Identifier of a Delegation.",
+            "example": "d933b1530bc56c9953cf8ce166da8004",
+            "maxLength": 32,
+            "readOnly": true,
+            "type": "string"
+          },
+          "modified_at": {
+            "example": "2014-01-01T05:20:00.12345Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "parent_prefix_id": {
+            "description": "Identifier of an IP Prefix.",
+            "example": "2af39739cc4e3b5910c918468bb89828",
+            "maxLength": 32,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "addressing_single_response": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/addressing_api-response-single"
+          },
+          {
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/addressing_ipam-prefixes"
+              }
+            }
+          }
+        ]
+      },
+      "addressing_address-maps": {
+        "properties": {
+          "can_delete": {
+            "description": "If set to false, then the Address Map cannot be deleted via API. This is true for Cloudflare-managed maps.",
+            "example": true,
+            "readOnly": true,
+            "type": "boolean"
+          },
+          "can_modify_ips": {
+            "description": "If set to false, then the IPs on the Address Map cannot be modified via the API. This is true for Cloudflare-managed maps.",
+            "example": true,
+            "readOnly": true,
+            "type": "boolean"
+          },
+          "created_at": {
+            "example": "2014-01-01T05:20:00.12345Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "default_sni": {
+            "description": "If you have legacy TLS clients which do not send the TLS server name indicator, then you can specify one default SNI on the map. If Cloudflare receives a TLS handshake from a client without an SNI, it will respond with the default SNI on those IPs. The default SNI can be any valid zone or subdomain owned by the account.",
+            "example": "*.example.com",
+            "nullable": true,
+            "type": "string"
+          },
+          "description": {
+            "description": "An optional description field which may be used to describe the types of IPs or zones on the map.",
+            "example": "My Ecommerce zones",
+            "nullable": true,
+            "type": "string"
+          },
+          "enabled": {
+            "default": false,
+            "description": "Whether the Address Map is enabled or not. Cloudflare's DNS will not respond with IP addresses on an Address Map until the map is enabled.",
+            "example": true,
+            "nullable": true,
+            "type": "boolean"
+          },
+          "id": {
+            "description": "Identifier of an Address Map.",
+            "example": "055817b111884e0227e1be16a0be6ee0",
+            "maxLength": 32,
+            "type": "string"
+          },
+          "modified_at": {
+            "example": "2014-01-01T05:20:00.12345Z",
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "dls_api-response-common": {
+        "properties": {
+          "errors": {
+            "$ref": "#/components/schemas/dls_messages"
+          },
+          "messages": {
+            "$ref": "#/components/schemas/dls_messages"
+          },
+          "success": {
+            "description": "Whether the API call was successful.",
+            "enum": [
+              true
+            ],
+            "example": true,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success",
+          "errors",
+          "messages"
+        ],
+        "type": "object"
+      },
+      "addressing_leases_components-schemas-response_collection": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/addressing_api-response-collection"
+          },
+          {
+            "properties": {
+              "result": {
+                "items": {
+                  "$ref": "#/components/schemas/addressing_lease"
+                },
+                "type": "array"
+              }
+            }
+          }
+        ]
+      },
+      "addressing_messages": {
+        "example": [],
+        "items": {
+          "properties": {
+            "code": {
+              "minimum": 1000,
+              "type": "integer"
+            },
+            "documentation_url": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "source": {
+              "properties": {
+                "pointer": {
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ],
+          "type": "object",
+          "uniqueItems": true
+        },
+        "type": "array"
+      },
+      "addressing_address-maps-membership": {
+        "properties": {
+          "can_delete": {
+            "description": "Controls whether the membership can be deleted via the API or not.",
+            "example": true,
+            "readOnly": true,
+            "type": "boolean"
+          },
+          "created_at": {
+            "example": "2014-01-01T05:20:00.12345Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "identifier": {
+            "description": "The identifier for the membership (eg. a zone or account tag).",
+            "example": "023e105f4ecef8ad9ca31a8372d0c353",
+            "maxLength": 32,
+            "type": "string"
+          },
+          "kind": {
+            "description": "The type of the membership.",
+            "enum": [
+              "zone",
+              "account"
+            ],
+            "example": "zone",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "addressing_ipam-bgp-prefixes": {
+        "properties": {
+          "asn": {
+            "description": "Autonomous System Number (ASN) the prefix will be advertised under.",
+            "example": 13335,
+            "nullable": true,
+            "type": "integer"
+          },
+          "asn_prepend_count": {
+            "default": 0,
+            "description": "Number of times to prepend the Cloudflare ASN to the BGP AS-Path attribute",
+            "example": 2,
+            "maximum": 3,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "auto_advertise_withdraw": {
+            "default": false,
+            "description": "Determines if Cloudflare advertises a BYOIP BGP prefix even when there is no matching BGP prefix in the Magic routing table. When true, Cloudflare will automatically withdraw the BGP prefix when there are no matching BGP routes, and will resume advertising when there is at least one matching BGP route.",
+            "example": true,
+            "type": "boolean"
+          },
+          "bgp_signal_opts": {
+            "$ref": "#/components/schemas/addressing_bgp_signal_opts"
+          },
+          "cidr": {
+            "description": "IP Prefix in Classless Inter-Domain Routing format.",
+            "example": "192.0.2.0/24",
+            "type": "string"
+          },
+          "created_at": {
+            "example": "2014-01-01T05:20:00.12345Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "description": "Identifier of BGP Prefix.",
+            "example": "7009ba364c7a5760798ceb430e603b74",
+            "maxLength": 32,
+            "type": "string"
+          },
+          "modified_at": {
+            "example": "2014-01-01T05:20:00.12345Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "on_demand": {
+            "$ref": "#/components/schemas/addressing_bgp_on_demand"
+          }
+        },
+        "type": "object"
+      },
+      "addressing_bgp_on_demand": {
+        "properties": {
+          "advertised": {
+            "description": "Prefix advertisement status to the Internet. This field is only not 'null' if on demand is enabled.",
+            "example": true,
+            "nullable": true,
+            "type": "boolean"
+          },
+          "advertised_modified_at": {
+            "description": "Last time the advertisement status was changed. This field is only not 'null' if on demand is enabled.",
+            "example": "2014-01-01T05:20:00.12345Z",
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
+          },
+          "on_demand_enabled": {
+            "description": "Whether advertisement of the prefix to the Internet may be dynamically enabled or disabled.",
+            "example": true,
+            "type": "boolean"
+          },
+          "on_demand_locked": {
+            "description": "Whether the advertisement status of the prefix is locked, meaning it cannot be changed.",
+            "example": false,
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "dls_messages": {
+        "example": [],
+        "items": {
+          "properties": {
+            "code": {
+              "minimum": 1000,
+              "type": "integer"
+            },
+            "documentation_url": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "source": {
+              "properties": {
+                "pointer": {
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ],
+          "type": "object",
+          "uniqueItems": true
+        },
+        "type": "array"
+      },
+      "addressing_lease": {
+        "properties": {
+          "active_from": {
+            "description": "Timestamp of the moment the lease was created.\n",
+            "example": "2020-01-01T00:00:00Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "cidrs": {
+            "description": "CIDRs attached to the lease",
+            "example": [
+              "192.0.2.100/32",
+              "192.0.2.101/32"
+            ],
+            "items": {
+              "description": "IP Prefix in Classless Inter-Domain Routing format.",
+              "example": "192.0.2.0/24",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "created_at": {
+            "description": "Timestamp of the moment the object was created.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "description": "Identifier for the lease",
+            "example": "8fee4b6fd361283a72381ccfda355471",
+            "type": "string"
+          },
+          "modified_at": {
+            "description": "Timestamp of the moment the object was modified.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "owner_id": {
+            "description": "Cloudflare account ID of the account owning the lease.",
+            "example": "3a7d3de1d0682240cf046c7f50866cc5",
+            "type": "string"
+          },
+          "purpose": {
+            "description": "Describes the purpose of the addresses.",
+            "example": "Spectrum Static IPs",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "addressing_bgp_signal_opts": {
+        "properties": {
+          "enabled": {
+            "description": "Whether control of advertisement of the prefix to the Internet is enabled to be performed via BGP signal",
+            "example": false,
+            "type": "boolean"
+          },
+          "modified_at": {
+            "description": "Last time BGP signaling control was toggled. This field is null if BGP signaling has never been enabled.",
+            "example": "2014-01-01T05:20:00.12345Z",
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    },
+    "parameters": {
+      "dls_hostname": {
+        "in": "path",
+        "name": "hostname",
+        "required": true,
+        "schema": {
+          "description": "DNS hostname to be regionalized, must be a subdomain of the zone. Wildcards are supported for one level, e.g `*.example.com`",
+          "example": "foo.example.com",
+          "type": "string"
+        }
+      },
+      "dls_account_id": {
+        "in": "path",
+        "name": "account_id",
+        "required": true,
+        "schema": {
+          "description": "Identifier.",
+          "example": "023e105f4ecef8ad9ca31a8372d0c353",
+          "maxLength": 32,
+          "type": "string"
+        }
+      },
+      "dls_zone_id": {
+        "in": "path",
+        "name": "zone_id",
+        "required": true,
+        "schema": {
+          "description": "Identifier.",
+          "example": "023e105f4ecef8ad9ca31a8372d0c353",
+          "maxLength": 32,
+          "type": "string"
+        }
+      }
+    },
+    "securitySchemes": {
+      "api_email": {
+        "in": "header",
+        "name": "X-Auth-Email",
+        "type": "apiKey"
+      },
+      "api_key": {
+        "in": "header",
+        "name": "X-Auth-Key",
+        "type": "apiKey"
+      },
+      "api_token": {
+        "scheme": "bearer",
+        "type": "http"
+      },
+      "user_service_key": {
+        "in": "header",
+        "name": "X-Auth-User-Service-Key",
+        "type": "apiKey"
+      }
+    }
+  }
+}

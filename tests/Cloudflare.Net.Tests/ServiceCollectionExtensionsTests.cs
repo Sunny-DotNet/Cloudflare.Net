@@ -1,8 +1,9 @@
 using Cloudflare.Net.Authentication;
 using Cloudflare.Net.Extensions;
-using Cloudflare.Net.Generated;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Abstractions.Authentication;
+using Microsoft.Kiota.Http.HttpClientLibrary;
 using Xunit;
 
 namespace Cloudflare.Net.Tests;
@@ -45,7 +46,7 @@ public class ServiceCollectionExtensionsTests
     }
 
     [Fact]
-    public void AddCloudflareClient_ShouldRegisterCloudflareApiClient()
+    public void AddCloudflareClient_ShouldRegisterRequestAdapter()
     {
         var services = new ServiceCollection();
 
@@ -56,9 +57,10 @@ public class ServiceCollectionExtensionsTests
 
         using var provider = services.BuildServiceProvider();
         using var scope = provider.CreateScope();
-        var client = scope.ServiceProvider.GetRequiredService<CloudflareApiClient>();
+        var adapter = scope.ServiceProvider.GetRequiredService<IRequestAdapter>();
 
-        Assert.NotNull(client);
+        Assert.NotNull(adapter);
+        Assert.IsType<HttpClientRequestAdapter>(adapter);
     }
 
     [Fact]

@@ -1,0 +1,177 @@
+{
+  "Radar": {
+    "file": "cloudflare-radar.json",
+    "class_name": "CloudflareRadarClient",
+    "namespace": "Cloudflare.Net.Radar",
+    "paths": 268,
+    "schemas": 0
+  },
+  "AI": {
+    "file": "cloudflare-ai.json",
+    "class_name": "CloudflareAIClient",
+    "namespace": "Cloudflare.Net.AI",
+    "paths": 117,
+    "schemas": 0
+  },
+  "CloudforceOne": {
+    "file": "cloudflare-cloudforceone.json",
+    "class_name": "CloudflareCloudforceOneClient",
+    "namespace": "Cloudflare.Net.CloudforceOne",
+    "paths": 96,
+    "schemas": 40
+  },
+  "Access": {
+    "file": "cloudflare-access.json",
+    "class_name": "CloudflareAccessClient",
+    "namespace": "Cloudflare.Net.Access",
+    "paths": 76,
+    "schemas": 264
+  },
+  "Workers": {
+    "file": "cloudflare-workers.json",
+    "class_name": "CloudflareWorkersClient",
+    "namespace": "Cloudflare.Net.Workers",
+    "paths": 54,
+    "schemas": 88
+  },
+  "Magic": {
+    "file": "cloudflare-magic.json",
+    "class_name": "CloudflareMagicClient",
+    "namespace": "Cloudflare.Net.Magic",
+    "paths": 49,
+    "schemas": 225
+  },
+  "Realtime": {
+    "file": "cloudflare-realtime.json",
+    "class_name": "CloudflareRealtimeClient",
+    "namespace": "Cloudflare.Net.Realtime",
+    "paths": 10,
+    "schemas": 40
+  },
+  "AIGateway": {
+    "file": "cloudflare-aigateway.json",
+    "class_name": "CloudflareAIGatewayClient",
+    "namespace": "Cloudflare.Net.AIGateway",
+    "paths": 36,
+    "schemas": 0
+  },
+  "Devices": {
+    "file": "cloudflare-devices.json",
+    "class_name": "CloudflareDevicesClient",
+    "namespace": "Cloudflare.Net.Devices",
+    "paths": 54,
+    "schemas": 125
+  },
+  "DLP": {
+    "file": "cloudflare-dlp.json",
+    "class_name": "CloudflareDLPClient",
+    "namespace": "Cloudflare.Net.DLP",
+    "paths": 29,
+    "schemas": 71
+  },
+  "EmailSecurity": {
+    "file": "cloudflare-emailsecurity.json",
+    "class_name": "CloudflareEmailSecurityClient",
+    "namespace": "Cloudflare.Net.EmailSecurity",
+    "paths": 42,
+    "schemas": 76
+  },
+  "Stream": {
+    "file": "cloudflare-stream.json",
+    "class_name": "CloudflareStreamClient",
+    "namespace": "Cloudflare.Net.Stream",
+    "paths": 22,
+    "schemas": 47
+  },
+  "Intel": {
+    "file": "cloudflare-intel.json",
+    "class_name": "CloudflareIntelClient",
+    "namespace": "Cloudflare.Net.Intel",
+    "paths": 65,
+    "schemas": 83
+  },
+  "Gateway": {
+    "file": "cloudflare-gateway.json",
+    "class_name": "CloudflareGatewayClient",
+    "namespace": "Cloudflare.Net.Gateway",
+    "paths": 25,
+    "schemas": 89
+  },
+  "ZeroTrust": {
+    "file": "cloudflare-zerotrust.json",
+    "class_name": "CloudflareZeroTrustClient",
+    "namespace": "Cloudflare.Net.ZeroTrust",
+    "paths": 34,
+    "schemas": 71
+  },
+  "Addressing": {
+    "file": "cloudflare-addressing.json",
+    "class_name": "CloudflareAddressingClient",
+    "namespace": "Cloudflare.Net.Addressing",
+    "paths": 22,
+    "schemas": 41
+  },
+  "Builds": {
+    "file": "cloudflare-builds.json",
+    "class_name": "CloudflareBuildsClient",
+    "namespace": "Cloudflare.Net.Builds",
+    "paths": 29,
+    "schemas": 45
+  },
+  "Vectorize": {
+    "file": "cloudflare-vectorize.json",
+    "class_name": "CloudflareVectorizeClient",
+    "namespace": "Cloudflare.Net.Vectorize",
+    "paths": 19,
+    "schemas": 31
+  },
+  "Storage": {
+    "file": "cloudflare-storage.json",
+    "class_name": "CloudflareStorageClient",
+    "namespace": "Cloudflare.Net.Storage",
+    "paths": 57,
+    "schemas": 141
+  },
+  "Accounts": {
+    "file": "cloudflare-accounts.json",
+    "class_name": "CloudflareAccountsClient",
+    "namespace": "Cloudflare.Net.Accounts",
+    "paths": 39,
+    "schemas": 146
+  },
+  "Observability": {
+    "file": "cloudflare-observability.json",
+    "class_name": "CloudflareObservabilityClient",
+    "namespace": "Cloudflare.Net.Observability",
+    "paths": 77,
+    "schemas": 177
+  },
+  "Network": {
+    "file": "cloudflare-network.json",
+    "class_name": "CloudflareNetworkClient",
+    "namespace": "Cloudflare.Net.Network",
+    "paths": 60,
+    "schemas": 196
+  },
+  "Security": {
+    "file": "cloudflare-security.json",
+    "class_name": "CloudflareSecurityClient",
+    "namespace": "Cloudflare.Net.Security",
+    "paths": 73,
+    "schemas": 201
+  },
+  "Zones": {
+    "file": "cloudflare-zones.json",
+    "class_name": "CloudflareZonesClient",
+    "namespace": "Cloudflare.Net.Zones",
+    "paths": 178,
+    "schemas": 721
+  },
+  "Misc": {
+    "file": "cloudflare-misc.json",
+    "class_name": "CloudflareMiscClient",
+    "namespace": "Cloudflare.Net.Misc",
+    "paths": 177,
+    "schemas": 442
+  }
+}

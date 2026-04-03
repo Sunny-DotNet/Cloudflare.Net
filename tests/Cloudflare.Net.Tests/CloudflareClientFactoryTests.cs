@@ -1,4 +1,4 @@
-using Cloudflare.Net.Generated;
+using Microsoft.Kiota.Http.HttpClientLibrary;
 using Xunit;
 
 namespace Cloudflare.Net.Tests;
@@ -6,25 +6,25 @@ namespace Cloudflare.Net.Tests;
 public class CloudflareClientFactoryTests
 {
     [Fact]
-    public void Create_WithToken_ShouldReturnClient()
+    public void Create_WithToken_ShouldReturnAdapter()
     {
-        var client = CloudflareClientFactory.Create("test_api_token");
+        var adapter = CloudflareClientFactory.Create("test_api_token");
 
-        Assert.NotNull(client);
-        Assert.IsType<CloudflareApiClient>(client);
+        Assert.NotNull(adapter);
+        Assert.IsType<HttpClientRequestAdapter>(adapter);
     }
 
     [Fact]
-    public void Create_WithEmailAndApiKey_ShouldReturnClient()
+    public void Create_WithEmailAndApiKey_ShouldReturnAdapter()
     {
-        var client = CloudflareClientFactory.Create("user@example.com", "global_api_key");
+        var adapter = CloudflareClientFactory.Create("user@example.com", "global_api_key");
 
-        Assert.NotNull(client);
-        Assert.IsType<CloudflareApiClient>(client);
+        Assert.NotNull(adapter);
+        Assert.IsType<HttpClientRequestAdapter>(adapter);
     }
 
     [Fact]
-    public void Create_WithOptions_Token_ShouldReturnClient()
+    public void Create_WithOptions_Token_ShouldReturnAdapter()
     {
         var options = new CloudflareClientOptions
         {
@@ -33,14 +33,14 @@ public class CloudflareClientFactoryTests
             BaseUrl = "https://api.cloudflare.com/client/v4"
         };
 
-        var client = CloudflareClientFactory.Create(options);
+        var adapter = CloudflareClientFactory.Create(options);
 
-        Assert.NotNull(client);
-        Assert.IsType<CloudflareApiClient>(client);
+        Assert.NotNull(adapter);
+        Assert.IsType<HttpClientRequestAdapter>(adapter);
     }
 
     [Fact]
-    public void Create_WithOptions_ApiKey_ShouldReturnClient()
+    public void Create_WithOptions_ApiKey_ShouldReturnAdapter()
     {
         var options = new CloudflareClientOptions
         {
@@ -48,10 +48,10 @@ public class CloudflareClientFactoryTests
             ApiKey = "global_api_key"
         };
 
-        var client = CloudflareClientFactory.Create(options);
+        var adapter = CloudflareClientFactory.Create(options);
 
-        Assert.NotNull(client);
-        Assert.IsType<CloudflareApiClient>(client);
+        Assert.NotNull(adapter);
+        Assert.IsType<HttpClientRequestAdapter>(adapter);
     }
 
     [Fact]
@@ -71,13 +71,13 @@ public class CloudflareClientFactoryTests
     }
 
     [Fact]
-    public void Create_WithHttpClient_ShouldReturnClient()
+    public void Create_WithHttpClient_ShouldReturnAdapter()
     {
         using var httpClient = new HttpClient();
-        var client = CloudflareClientFactory.Create("test_api_token", httpClient);
+        var adapter = CloudflareClientFactory.Create("test_api_token", httpClient);
 
-        Assert.NotNull(client);
-        Assert.IsType<CloudflareApiClient>(client);
+        Assert.NotNull(adapter);
+        Assert.IsType<HttpClientRequestAdapter>(adapter);
     }
 
     [Fact]
@@ -105,17 +105,17 @@ public class CloudflareClientFactoryTests
     }
 
     [Fact]
-    public void CreateFromEnvironment_WithEnvVar_ShouldReturnClient()
+    public void CreateFromEnvironment_WithEnvVar_ShouldReturnAdapter()
     {
         var original = Environment.GetEnvironmentVariable("CLOUDFLARE_API_TOKEN");
         try
         {
             Environment.SetEnvironmentVariable("CLOUDFLARE_API_TOKEN", "test_token_from_env");
 
-            var client = CloudflareClientFactory.CreateFromEnvironment();
+            var adapter = CloudflareClientFactory.CreateFromEnvironment();
 
-            Assert.NotNull(client);
-            Assert.IsType<CloudflareApiClient>(client);
+            Assert.NotNull(adapter);
+            Assert.IsType<HttpClientRequestAdapter>(adapter);
         }
         finally
         {
@@ -124,17 +124,17 @@ public class CloudflareClientFactoryTests
     }
 
     [Fact]
-    public void CreateFromWranglerConfigFile_WithValidToml_ShouldReturnClient()
+    public void CreateFromWranglerConfigFile_WithValidToml_ShouldReturnAdapter()
     {
         var tempFile = Path.GetTempFileName();
         try
         {
             File.WriteAllText(tempFile, "oauth_token = \"test_token_from_wrangler\"\n");
 
-            var client = CloudflareClientFactory.CreateFromWranglerConfigFile(tempFile);
+            var adapter = CloudflareClientFactory.CreateFromWranglerConfigFile(tempFile);
 
-            Assert.NotNull(client);
-            Assert.IsType<CloudflareApiClient>(client);
+            Assert.NotNull(adapter);
+            Assert.IsType<HttpClientRequestAdapter>(adapter);
         }
         finally
         {
@@ -143,17 +143,17 @@ public class CloudflareClientFactoryTests
     }
 
     [Fact]
-    public void CreateFromWranglerConfigFile_WithApiToken_ShouldReturnClient()
+    public void CreateFromWranglerConfigFile_WithApiToken_ShouldReturnAdapter()
     {
         var tempFile = Path.GetTempFileName();
         try
         {
             File.WriteAllText(tempFile, "api_token = \"test_api_token_from_wrangler\"\n");
 
-            var client = CloudflareClientFactory.CreateFromWranglerConfigFile(tempFile);
+            var adapter = CloudflareClientFactory.CreateFromWranglerConfigFile(tempFile);
 
-            Assert.NotNull(client);
-            Assert.IsType<CloudflareApiClient>(client);
+            Assert.NotNull(adapter);
+            Assert.IsType<HttpClientRequestAdapter>(adapter);
         }
         finally
         {
@@ -169,12 +169,12 @@ public class CloudflareClientFactoryTests
         {
             File.WriteAllText(tempFile, "oauth_token = \"test_token\"\n");
 
-            var client = CloudflareClientFactory.CreateFromWranglerConfigFile(tempFile, options =>
+            var adapter = CloudflareClientFactory.CreateFromWranglerConfigFile(tempFile, options =>
             {
                 options.Timeout = TimeSpan.FromMinutes(5);
             });
 
-            Assert.NotNull(client);
+            Assert.NotNull(adapter);
         }
         finally
         {

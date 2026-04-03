@@ -1,44 +1,39 @@
 using Cloudflare.Net.Authentication;
-using Cloudflare.Net.Generated;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
+using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Abstractions.Authentication;
 using Microsoft.Kiota.Http.HttpClientLibrary;
 
 namespace Cloudflare.Net.Extensions;
 
 /// <summary>
-/// Extension methods for registering Cloudflare API client services with the dependency injection container.
-/// 用于在依赖注入容器中注册 Cloudflare API 客户端服务的扩展方法。
+/// Extension methods for registering Cloudflare API services with the dependency injection container.
+/// Each Cloudflare.Net.* API package provides additional extension methods to register its specific client.
+/// <para>
+/// 用于在依赖注入容器中注册 Cloudflare API 服务的扩展方法。
+/// 每个 Cloudflare.Net.* API 包提供额外的扩展方法来注册其特定的客户端。
+/// </para>
 /// </summary>
 /// <example>
 /// <code>
-/// // In your Program.cs or Startup.cs / 在 Program.cs 或 Startup.cs 中
+/// // Register core services / 注册核心服务
 /// services.AddCloudflareClient(options =>
 /// {
 ///     options.Token = configuration["Cloudflare:Token"]!;
 /// });
 ///
-/// // Then inject the client / 然后注入客户端
-/// public class MyService(CloudflareApiClient client)
-/// {
-///     public async Task DoWork()
-///     {
-///         var zones = await client.Zones.GetAsync();
-///     }
-/// }
+/// // Then register API-specific clients from each package / 然后从各包注册 API 客户端
+/// // services.AddCloudflareZones();
+/// // services.AddCloudflareWorkers();
 /// </code>
 /// </example>
 public static class ServiceCollectionExtensions
 {
     /// <summary>
-    /// Adds the Cloudflare API client to the service collection.
-    /// Token must be configured separately via <c>IConfiguration</c> binding or other means.
-    /// <para>
-    /// 将 Cloudflare API 客户端添加到服务集合中。
-    /// 令牌需通过 <c>IConfiguration</c> 绑定或其他方式单独配置。
-    /// </para>
+    /// Adds core Cloudflare API services (authentication, HTTP client, request adapter) to the service collection.
+    /// <para>将核心 Cloudflare API 服务（认证、HTTP 客户端、请求适配器）添加到服务集合中。</para>
     /// </summary>
     /// <param name="services">The service collection. / 服务集合。</param>
     /// <returns>The service collection for chaining. / 用于链式调用的服务集合。</returns>
@@ -49,8 +44,8 @@ public static class ServiceCollectionExtensions
     }
 
     /// <summary>
-    /// Adds the Cloudflare API client to the service collection.
-    /// 将 Cloudflare API 客户端添加到服务集合中。
+    /// Adds core Cloudflare API services to the service collection with the specified options.
+    /// <para>使用指定的选项将核心 Cloudflare API 服务添加到服务集合中。</para>
     /// </summary>
     /// <param name="services">The service collection. / 服务集合。</param>
     /// <param name="configureOptions">An action to configure the client options. / 配置客户端选项的操作。</param>
@@ -98,19 +93,17 @@ public static class ServiceCollectionExtensions
             client.DefaultRequestHeaders.UserAgent.ParseAdd(options.UserAgent);
         });
 
-        services.TryAddScoped(sp =>
+        services.TryAddScoped<IRequestAdapter>(sp =>
         {
             var options = sp.GetRequiredService<IOptions<CloudflareClientOptions>>().Value;
             var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
             var httpClient = httpClientFactory.CreateClient("Cloudflare");
             var authProvider = sp.GetRequiredService<IAuthenticationProvider>();
 
-            var adapter = new HttpClientRequestAdapter(authProvider, httpClient: httpClient)
+            return new HttpClientRequestAdapter(authProvider, httpClient: httpClient)
             {
                 BaseUrl = options.BaseUrl
             };
-
-            return new CloudflareApiClient(adapter);
         });
 
         return services;

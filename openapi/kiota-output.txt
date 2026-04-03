@@ -1,0 +1,100 @@
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator iam_api-response-single is not inherited from iam_apiResponseCommon.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator public-ip_api-response-single is not inherited from publicIp_apiResponseCommon.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator public-ip_api-response-common is not inherited from publicIp_apiResponseSingle.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator iam_api-response-common is not inherited from iam_apiResponseSingle.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator zone-activation_api-response-single is not inherited from zoneActivation_apiResponseCommon.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator zone-activation_api-response-common is not inherited from zoneActivation_apiResponseSingle.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator bill-subs-api_schemas-rate-plan is not inherited from billSubsApi_ratePlan.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator bill-subs-api_rate-plan is not inherited from billSubsApi_schemasRatePlan.
+warn: Kiota.Builder.KiotaBuilder[15504111]
+      Could not create error type for 4XX in custom-origin-trust-store-delete
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator bot-management_api-response-single is not inherited from botManagement_apiResponseCommon.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator firewall_rate-limits is not inherited from firewall_ratelimit.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator firewall_ratelimit is not inherited from firewall_rateLimits.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator bot-management_api-response-common is not inherited from botManagement_apiResponseSingle.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator access_api-response-single is not inherited from access_apiResponseCommon.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator dns-custom-nameservers_get_response is not inherited from dnsCustomNameservers_apiResponseCollection.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator dns-custom-nameservers_get_response is not inherited from dnsCustomNameservers_apiResponseCommon.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator dns-custom-nameservers_get_response is not inherited from dnsCustomNameservers_zone_metadata.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator dns-settings_api-response-single is not inherited from dnsSettings_apiResponseCommon.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator dnssec_api-response-single is not inherited from dnssec_apiResponseCommon.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator dnssec_api-response-common is not inherited from dnssec_apiResponseSingle.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator access_api-response-common is not inherited from access_apiResponseSingle.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator email_api-response-single is not inherited from email_apiResponseCommon.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator dns-settings_api-response-common is not inherited from dnsSettings_apiResponseSingle.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator email_rules is not inherited from email_rule_properties.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator email_rule_properties is not inherited from email_rules.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator email_sending_subdomain is not inherited from email_sending_subdomain_properties.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator email_sending_subdomain_properties is not inherited from email_sending_subdomain.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator email_addresses is not inherited from email_destination_address_properties.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator email_destination_address_properties is not inherited from email_addresses.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator fraud_api-response-single is not inherited from fraud_apiResponseCommon.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator fraud_api-response-common is not inherited from fraud_apiResponseSingle.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator email_settings is not inherited from email_email_settings_properties.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator email_email_settings_properties is not inherited from email_settings.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator email_api-response-common is not inherited from email_apiResponseSingle.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator dns-analytics_api-response-single is not inherited from dnsAnalytics_apiResponseCommon.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator dns-analytics_api-response-common is not inherited from dnsAnalytics_apiResponseSingle.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator observatory_api-response-single is not inherited from observatory_apiResponseCommon.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator waf-managed-rules_schemas-base is not inherited from wafManagedRules_base.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator logcontrol_api-response-single is not inherited from logcontrol_apiResponseCommon.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator waf-managed-rules_base is not inherited from wafManagedRules_schemasBase.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator secondary-dns_api-response-single is not inherited from secondaryDns_apiResponseCommon.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator logcontrol_api-response-common is not inherited from logcontrol_apiResponseSingle.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator observatory_api-response-common is not inherited from observatory_apiResponseSingle.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator spectrum-analytics_api-response-single is not inherited from spectrumAnalytics_apiResponseCommon.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator spectrum-analytics_api-response-common is not inherited from spectrumAnalytics_apiResponseSingle.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator secondary-dns_api-response-common is not inherited from secondaryDns_apiResponseSingle.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator workers_single_step_migrations is not inherited from workers_migration_step.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator workers_single_step_migrations is not inherited from workers_migration_tag_conditions.
+warn: Kiota.Builder.KiotaBuilder[1871951166]
+      Discriminator zones_ssl_recommender is not inherited from zones_ssl_recommender.
+crit: Kiota.Builder.KiotaBuilder[0]
+      error generating the client: One or more errors occurred. (One or more errors occurred. (One or more errors occurred. (One or more errors occurred. (One or more errors occurred. (One or more errors occurred. (The schema reference is not resolved))))))

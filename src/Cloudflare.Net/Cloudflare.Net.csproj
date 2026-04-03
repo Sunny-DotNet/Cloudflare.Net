@@ -1,0 +1,63 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net8.0;net9.0;net10.0</TargetFrameworks>
+    <RootNamespace>Cloudflare.Net</RootNamespace>
+    <AssemblyName>Cloudflare.Net</AssemblyName>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+    <!-- NuGet Package Metadata -->
+    <PackageId>Cloudflare.Net</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>Sunny</Authors>
+    <Description>A comprehensive .NET client library for the Cloudflare API, covering all 445+ resource categories including DNS, Zones, Workers, R2, KV, WAF, DDoS Protection, and more. Auto-generated from the official OpenAPI specification using Microsoft Kiota.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/m67186636/Cloudflare.Net</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/m67186636/Cloudflare.Net</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>cloudflare;cloud;api;dns;workers;r2;kv;waf;ddos;cdn;zero-trust;pages</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Copyright>Copyright (c) 2026 Sunny</Copyright>
+    <PackageReleaseNotes>See https://github.com/m67186636/Cloudflare.Net/blob/main/CHANGELOG.md</PackageReleaseNotes>
+    <NoWarn>$(NoWarn);CS1591;CS1584;CS1658</NoWarn>
+  </PropertyGroup>
+
+  <!-- Multi-targeting polyfills -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.*" />
+    <PackageReference Include="System.Text.Json" Version="8.*" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
+    <PackageReference Include="System.Text.Json" Version="8.*" />
+  </ItemGroup>
+
+  <!-- Kiota runtime dependencies -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Kiota.Abstractions" Version="1.*" />
+    <PackageReference Include="Microsoft.Kiota.Http.HttpClientLibrary" Version="1.*" />
+    <PackageReference Include="Microsoft.Kiota.Serialization.Json" Version="1.*" />
+    <PackageReference Include="Microsoft.Kiota.Serialization.Text" Version="1.*" />
+    <PackageReference Include="Microsoft.Kiota.Serialization.Form" Version="1.*" />
+    <PackageReference Include="Microsoft.Kiota.Serialization.Multipart" Version="1.*" />
+  </ItemGroup>
+
+  <!-- DI support -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.*" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="8.*" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="8.*" />
+  </ItemGroup>
+
+  <!-- TOML support (for wrangler config) -->
+  <ItemGroup>
+    <PackageReference Include="Tomlyn" Version="0.*" />
+  </ItemGroup>
+
+  <!-- Package content -->
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\LICENSE" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>

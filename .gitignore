@@ -396,6 +396,18 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
+# ── Kiota-generated code overrides ──
+# Standard .NET ignore patterns above match some Kiota-generated directory names
+# (Logs, Release, Publish, Packages). Force-include them under src/**/Generated/.
+!src/**/Generated/**/[Ll]ogs/
+!src/**/Generated/**/[Ll]ogs/**
+!src/**/Generated/**/[Rr]elease/
+!src/**/Generated/**/[Rr]elease/**
+!src/**/Generated/**/[Pp]ublish/
+!src/**/Generated/**/[Pp]ublish/**
+!src/**/Generated/**/[Pp]ackages/
+!src/**/Generated/**/[Pp]ackages/**
+
 # VS Code files for those working on multiple tools
 .vscode/*
 !.vscode/settings.json

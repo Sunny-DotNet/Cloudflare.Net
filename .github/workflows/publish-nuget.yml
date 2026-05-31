@@ -39,7 +39,7 @@ jobs:
 
     - name: Pack all packages
       run: |
-        for csproj in src/Cloudflare.Net*/Cloudflare.Net*.csproj; do
+        for csproj in src/Cloudflare*/Cloudflare*.csproj; do
           dotnet pack "$csproj" --no-build --configuration Release --output ./nupkg -p:Version=${{ steps.version.outputs.VERSION }} -p:IncludeSymbols=false
         done
         rm -f ./nupkg/*.snupkg

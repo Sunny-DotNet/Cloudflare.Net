@@ -53,7 +53,7 @@ def fix_enum_default_assignments(content: str) -> tuple[str, int]:
     fixes = 0
     # Find all constructor bodies and comment out global:: enum assignments
     # Pattern: lines inside constructors that do PropertyName = global::...;
-    # We need to match: "            Value = global::Cloudflare.Net.Zones.Generated.Models.Zones_sha1_support_value.Off;"
+    # We need to match: "            Value = global::Cloudflare.Zones.Generated.Models.Zones_sha1_support_value.Off;"
     
     lines = content.split('\n')
     new_lines = []

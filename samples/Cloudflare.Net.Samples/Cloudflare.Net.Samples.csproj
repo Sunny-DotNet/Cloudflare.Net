@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Cloudflare.Net\Cloudflare.Net.csproj" />
-    <ProjectReference Include="..\..\src\Cloudflare.Net.Radar\Cloudflare.Net.Radar.csproj" />
+    <ProjectReference Include="..\..\src\Cloudflare.Radar\Cloudflare.Radar.csproj" />
   </ItemGroup>
 
 </Project>

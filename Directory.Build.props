@@ -1,5 +1,6 @@
 <Project>
   <PropertyGroup>
+    <RootNamespace>Cloudflare</RootNamespace>
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>

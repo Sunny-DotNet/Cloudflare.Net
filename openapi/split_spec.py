@@ -346,7 +346,7 @@ def main():
         manifest[pkg_name] = {
             'file': filename,
             'class_name': class_name,
-            'namespace': f'Cloudflare.Net.{pkg_name}',
+            'namespace': f'Cloudflare.{pkg_name}',
             'paths': len(paths),
             'schemas': schema_count,
         }

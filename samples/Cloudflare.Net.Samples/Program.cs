@@ -1,6 +1,6 @@
 #pragma warning disable CS0618 // Some Radar endpoints are deprecated but still functional
 
-using Cloudflare.Net.Radar.Generated;
+using Cloudflare.Radar.Generated;
 using Microsoft.Kiota.Abstractions;
 
 namespace Cloudflare.Net.Samples;

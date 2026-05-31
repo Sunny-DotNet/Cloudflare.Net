@@ -27,16 +27,20 @@ jobs:
           9.0.x
           10.0.x
 
+    - name: Extract version from tag
+      id: version
+      run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+
     - name: Restore dependencies
       run: dotnet restore
 
     - name: Build
-      run: dotnet build --no-restore --configuration Release
+      run: dotnet build --no-restore --configuration Release -p:Version=${{ steps.version.outputs.VERSION }}
 
     - name: Pack all packages
       run: |
         for csproj in src/Cloudflare.Net*/Cloudflare.Net*.csproj; do
-          dotnet pack "$csproj" --no-build --configuration Release --output ./nupkg
+          dotnet pack "$csproj" --no-build --configuration Release --output ./nupkg -p:Version=${{ steps.version.outputs.VERSION }}
         done
 
     - name: NuGet login
